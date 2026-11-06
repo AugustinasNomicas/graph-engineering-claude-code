@@ -716,10 +716,21 @@ function assert(name, cond, extra) {
   for (const [name, re] of TEMPLATE_PINS) assert(`template: ${name}`, re.test(template))
   // The README's drafting prompt says no rule without evidence; without this carve-out an agent
   // following it either copies all eight rules or deletes all eight. Both are wrong.
-  const bundleReadme = fs.readFileSync(path.join(__dirname, '..', '..', '..', 'README.md'), 'utf8')
-  assert('drafting prompt keeps a template rule only where its construct exists',
-    /Keep one only when\s+this repo has the construct it guards/.test(bundleReadme) &&
-      /Drop every rule whose construct is absent/.test(bundleReadme))
+  //
+  // The README is the BUNDLE's, not the adopter's: three directories up is the bundle root in this
+  // repo, but install.sh copies only claude/ into <repo>/.claude/, so after install the same path
+  // is the adopter's own README. Running the check there failed every adopter's first test run on
+  // a file they never wrote. Check it only when the file at that path is recognisably the bundle
+  // README (it carries the conventions-drafting prompt); otherwise say so and skip.
+  const readmePath = path.join(__dirname, '..', '..', '..', 'README.md')
+  const bundleReadme = fs.existsSync(readmePath) ? fs.readFileSync(readmePath, 'utf8') : ''
+  if (/Draft this repository's conventions doc/.test(bundleReadme)) {
+    assert('drafting prompt keeps a template rule only where its construct exists',
+      /Keep one only when\s+this repo has the construct it guards/.test(bundleReadme) &&
+        /Drop every rule whose construct is absent/.test(bundleReadme))
+  } else {
+    console.log('SKIP  drafting prompt keeps a template rule only where its construct exists (bundle README not present — installed copy)')
+  }
 
   // --- scenario 30: the ported charter checks sit inside ## Covers -----------------------------
   // A rule under "Does NOT Cover" is an instruction to IGNORE it, so the section matters.
