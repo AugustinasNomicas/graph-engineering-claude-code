@@ -1,0 +1,94 @@
+{
+  "_readme": [
+    "Copy this file to repo-profile.json (same directory) and fill it in. It is the ONLY file",
+    "that teaches the pipeline about your repository — the workflow script itself is meant to",
+    "stay byte-identical across repos, so if you are about to edit the script, check whether a",
+    "field here would do instead.",
+    "",
+    "The values below are an illustrative Node/TypeScript setup. Replace every one of them.",
+    "The bundle README has a per-stack command table (Node, Python, Go, Rust, Java, Make).",
+    "",
+    "Underscore-prefixed keys are comments and are ignored."
+  ],
+
+  "repoLabel": "the acme-api repo",
+
+  "_toolchain": [
+    "build_verify_cmd and test_cmd are REQUIRED: the run refuses to start without them,",
+    "because a gate that executes nothing reports green. restore_cmd is optional (skipped",
+    "when empty). format_cmd/lint_cmd back the QA gate; use the same command twice if your",
+    "formatter has no separate check mode.",
+    "Every command must be non-interactive, must exit non-zero on failure, and must run from",
+    "the repository root.",
+    "",
+    "The last three keys are OPTIONAL SPEED KEYS. Each falls back to its full-fat sibling, so",
+    "leaving them out is always safe — you just pay the slower command. They exist because the",
+    "inner loop dominates: an implement pass builds and tests once per pass per phase, and on",
+    "one measured .NET repo the whole-suite sweep was 16-25x running just the affected test",
+    "project. test_scoped_shape is the one worth filling in; the other two are minor.",
+    "",
+    "  build_fast_cmd     A build that skips codegen, doc generation or packaging that your",
+    "                     full build does. WARNING: if your fast build assumes generated",
+    "                     sources already exist, it only works after a full build has run —",
+    "                     setup runs build_verify_cmd once for exactly that reason, and the",
+    "                     pass prompt tells agents to re-run the full build if they hit a",
+    "                     missing-generated-source error. Omit if your build has no such mode.",
+    "  test_no_build_cmd  Your test command with its implicit rebuild disabled, used by the",
+    "                     Test gate, which runs immediately after the Build gate on the same",
+    "                     tree. Omit if your test runner does not build, or has no such flag.",
+    "  test_scoped_shape  A TEMPLATE, not a runnable command: how an agent runs ONE test",
+    "                     project/file/pattern. Use <placeholders>. Agents fill it in for the",
+    "                     code they just touched. Omit and they are asked, in prose, to scope",
+    "                     the full test_cmd down themselves."
+  ],
+  "toolchain": {
+    "restore_cmd": "npm ci",
+    "build_verify_cmd": "npm run build",
+    "test_cmd": "npm test -- --run",
+    "format_cmd": "npm run format",
+    "lint_cmd": "npm run lint",
+
+    "build_fast_cmd": "",
+    "test_no_build_cmd": "",
+    "test_scoped_shape": "npx vitest run <path/to/file.test.ts> -t '<test name>'"
+  },
+
+  "_conventionsDoc": [
+    "Repo-relative path to your binding conventions doc. EVERY implement and review agent is",
+    "ordered to read it in full and treat it as binding, so this is the highest-leverage file",
+    "in the whole setup. Start from conventions.template.md in this directory.",
+    "It must be COMMITTED — agents read it inside a fresh worktree."
+  ],
+  "conventionsDoc": ".claude/workflows/implement-plan-assets/conventions.md",
+
+  "_archDoc": [
+    "Optional. An architecture/overview doc agents read before coding. Leave as \"\" if you",
+    "have none; the prompts adapt rather than referencing a file that does not exist."
+  ],
+  "archDoc": "docs/architecture.md",
+
+  "_domainReviewer": [
+    "Charter name of your repo-specific hazards reviewer, always on the review board.",
+    "Resolves to reviewers/reviewer-<domainReviewer>.md. Start from",
+    "reviewer-domain-hazards.md and keep it nearly empty until retrospect fills it."
+  ],
+  "domainReviewer": "domain-hazards",
+
+  "_qaExtraSteps": [
+    "Checks your build and formatter do NOT catch, run by the QA gate in order. Each entry is",
+    "one instruction — a shell command, or a prose check an agent can perform. Leave [] if",
+    "you have none. Examples: a type-check separate from the build, a dead-import sweep, a",
+    "generated-file drift check, a dependency audit."
+  ],
+  "qaExtraSteps": [
+    "npx tsc --noEmit",
+    "npx depcheck --json (report unused/missing deps introduced by this branch; do not remove deps used only at runtime)"
+  ],
+
+  "_testFilterNote": [
+    "Optional caveat appended wherever test_cmd is shown to an agent. Use it for the traps a",
+    "newcomer to the repo would hit: which suites the filter excludes and why, whether a",
+    "container runtime or service must be running, expected runtime. Leave \"\" if none."
+  ],
+  "testFilterNote": "This command runs the unit suite only; the e2e suite needs a running database and is excluded on purpose."
+}

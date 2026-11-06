@@ -1,0 +1,43 @@
+# Graph engineering with Claude Code dynamic workflows
+
+Slides and speaker notes for a 30-minute talk.
+
+> Run more than one agent and you already have a graph — drawn on purpose, or by accident. Why
+> drawing it is an advantage, what a badly-shaped one costs, and a concrete starting example in
+> Claude Code dynamic workflows. Plus when not to bother.
+
+## View
+
+Open **[`slides.html`](slides.html)** in a browser — one self-contained file, nothing to install.
+
+- arrow keys or space to advance, `f` for fullscreen
+- `p` opens presenter view with the speaker notes (if your browser blocks that popup on a
+  `file://` URL, run `python3 -m http.server` here and open it over `http://`)
+
+The notes carry most of the detail: how each number was counted, the caveats, and the answers to
+the questions the talk tends to get.
+
+## Edit
+
+`slides.md` is the source ([Marp](https://marp.app/)). Edit it, then run `./build.sh`.
+
+Two Marp behaviours worth knowing before you do:
+
+- **A newline is a line break.** Marp sets `breaks: true`, so a line you wrap in the source for
+  readability renders as a visible break on the slide. Keep each paragraph and list item on one
+  source line and let the renderer wrap it.
+- **Run it with stdin closed.** `build.sh` already does; see the comment there for why.
+
+The diagram is Mermaid: `presentation-flow.mmd` is the source of `presentation-flow.svg`.
+
+```bash
+npx --yes @mermaid-js/mermaid-cli -i presentation-flow.mmd -o presentation-flow.svg -b transparent
+```
+
+## What the numbers are
+
+Every figure comes from one team, one .NET service, June to November 2026: 55 unattended runs of
+one dynamic workflow, each merged as a production PR. They are evidence that the shape *can* pay
+off and a worked example of how to measure your own — not a benchmark, and not a forecast for your
+codebase. The A/B comparison is a single ticket with three variables moving at once, and the deck
+says so on the slide that presents it.

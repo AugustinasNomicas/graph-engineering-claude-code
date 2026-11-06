@@ -1,0 +1,8 @@
+flowchart LR
+    SETUP["plan +<br/>worktree"] --> PH1
+    PH1["Phase 1"] --> PH2["Phase 2"] --> PHN["Phase N"]
+    PHN --> BR1["safety"] & BR2["security"] & BR3["+9 more"] & BR4["your<br/>domain"]
+    BR1 & BR2 & BR3 & BR4 --> MERGE["merge<br/>findings<br/>barrier"]
+    MERGE --> TG1["check A"] & TG2["check B"] & TG3["check C"]
+    TG1 & TG2 & TG3 --> WAVES["fix in<br/>waves<br/>barrier"]
+    WAVES --> GATES["gates"] --> FIN["finalize"] --> RDY{"ready<br/>ForPr?"}
