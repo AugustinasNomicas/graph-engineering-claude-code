@@ -147,17 +147,29 @@ to start.
 
 ```bash
 # macOS / Linux / WSL
-cd /path/to/your/repo/.claude/workflows/implement-plan-assets
+cd /path/to/your/repo
+grep -qxF '.claude/ai/' .gitignore 2>/dev/null || echo '.claude/ai/' >> .gitignore
+cd .claude/workflows/implement-plan-assets
 cp repo-profile.example.json repo-profile.json
 cp conventions.template.md conventions.md
 ```
 
 ```powershell
 # Windows
-cd C:\src\my-repo\.claude\workflows\implement-plan-assets
+cd C:\src\my-repo
+Add-Content .gitignore '.claude/ai/'          # skip if the line is already there
+cd .claude\workflows\implement-plan-assets
 Copy-Item repo-profile.example.json repo-profile.json
 Copy-Item conventions.template.md conventions.md
 ```
+
+**0. `.gitignore` — ignore `.claude/ai/`.** That directory is the pipeline's scratch space:
+`/create-plan` writes plans there, `retrospect` writes its proposal doc there, and the workflow
+force-adds a snapshot of the plan onto the branch at startup and strips it again before the PR.
+All of that assumes the directory is ignored. If your repo tracks it instead, the workflow still
+copes — the finalize step restores a plan that was already tracked at the base rather than
+deleting it — but every plan becomes a candidate for an accidental commit. The load-profile step
+warns when the directory is not ignored.
 
 **1. `repo-profile.json` — your commands (~15 min).** Take them from what your CI actually
 runs; `build_verify_cmd` and `test_cmd` are required.
@@ -350,8 +362,8 @@ everything generic is already covered by the other 16 charters, and a speculativ
 you a false finding on every future run.
 
 ```bash
-git add repo-profile.json conventions.md reviewers/   # MUST be committed:
-                                                      # agents read them inside a worktree
+git add .gitignore repo-profile.json conventions.md reviewers/   # MUST be committed:
+                                                                 # agents read them inside a worktree
 ```
 
 **4. Verify without changing anything.** `expand` is a dry run that returns the phase list,

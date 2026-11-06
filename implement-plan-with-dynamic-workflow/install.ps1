@@ -110,10 +110,18 @@ All of them run in the target repo, NOT in the directory you ran this installer 
   3. Keep reviewers\reviewer-domain-hazards.md nearly EMPTY until a real defect
      escapes. Speculative rules cost you a false finding on every run.
 
-  4. git add repo-profile.json conventions.md reviewers/
+  4. Gitignore the pipeline's scratch directory, from the repo root ($target):
+       Add-Content .gitignore '.claude/ai/'   (skip if the line is already there)
+     /create-plan writes plans there and the workflow treats it as internal state: it
+     force-adds a plan snapshot on the branch and strips it again before the PR. If the
+     directory is tracked instead, a plan you committed earlier gets edited on the branch
+     and the finalize step removes it from the PR diff rather than deleting it - but keep
+     it ignored so plans stay local proposals, never accidental commits.
+
+  5. git add .gitignore repo-profile.json conventions.md reviewers/
      They MUST be committed - agents read them inside a fresh git worktree.
 
-  5. Dry run, mutating nothing. Paths here are repo-root-relative, so run this from
+  6. Dry run, mutating nothing. Paths here are repo-root-relative, so run this from
      the repo root ($target), not from the assets directory you cd'd into above:
      Workflow({ scriptPath: ".claude/workflows/implement-plan-with-dynamic-workflow.js",
                 args: { plan: ".claude/ai/plan-....md", mode: "expand" } })

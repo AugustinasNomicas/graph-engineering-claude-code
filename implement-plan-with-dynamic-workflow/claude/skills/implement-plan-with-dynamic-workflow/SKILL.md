@@ -36,6 +36,10 @@ A run **fails fast** if `repo-profile.json` is missing or has no `build_verify_c
 - `.claude/workflows/implement-plan-assets/repo-profile.json` **exists and is filled in**, and
   the conventions doc and domain-reviewer charter it names exist and are **committed** (agents
   read them inside a fresh worktree, so uncommitted files are invisible).
+- `.claude/ai/` is **gitignored**. It is the pipeline's scratch directory: `/create-plan` writes
+  plans there, `retrospect` writes its proposal doc there, and the workflow force-adds a plan
+  snapshot onto the branch and strips it before the PR. The load-profile step warns if it is not
+  ignored; the finalize step restores (rather than deletes) a plan that the base already tracks.
 - An **approved phase-based plan** at a known path (e.g. `.claude/ai/plan-YYYY-MM-DD-*.md`)
   with `## Phase N` headings. Per-phase `**Complexity**: LOW|MEDIUM|HIGH` tags are honored
   (from the updated `/create-plan`); phases without a tag default to MEDIUM.
