@@ -663,4 +663,78 @@ function assert(name, cond, extra) {
   // docText.includes() was satisfied by any unformatted mention, including prose.
   const orphans = shipped.filter((a) => !named.has(a))
   assert('every shipped agent is referenced by a command or the skill', orphans.length === 0, orphans.join(','))
+
+  // --- scenario 28: the two fixer rules reach every fixer, and no reviewer ------------------
+  // Ported from the retrospects of the repo this bundle came from. Each pin is a token from the
+  // ACTIONABLE clause of its rule, not its label: replacing a rule body with "see notes" must fail.
+  console.log('--- scenario 28: fix-propagation and fix-scope reach the fixers only ---')
+  const fixerPrompts = []
+  const reviewerPrompts28 = []
+  await run({
+    args: baseArgs,
+    capturePrompt: (L, p) => {
+      if (/^phase\d+:review-fix$/.test(L) || /^fix:/.test(L)) fixerPrompts.push([L, p])
+      if (/^board:/.test(L) || /^phase\d+:(spec_review|hardening_review)$/.test(L)) reviewerPrompts28.push([L, p])
+    },
+  })
+  const FIXER_PINS = [
+    ['FIX PROPAGATION fixes every occurrence', /fix ALL occurrences in the same commit/],
+    ['FIX PROPAGATION covers moved members', /grep the WHOLE repo \(docs, code comments, test names/],
+    ['FIX PROPAGATION deletes zero-reference members', /members left with zero references and delete them/],
+    ['FIX PROPAGATION bans hard-coded list counts', /Never leave a hard-coded count of an enumerated list/],
+    ['FIX SCOPE bans unplanned rejections', /must not introduce a rejection, cap, limit or status code the plan does not list/],
+    ['FIX SCOPE requires a refusing sibling', /cite by file:line the closest sibling that already refuses the same case/],
+    ['FIX SCOPE defers shared-helper changes', /any such caller turns the fix into a deferral/],
+  ]
+  assert('both fixer kinds ran', fixerPrompts.some(([L]) => /review-fix$/.test(L)) && fixerPrompts.some(([L]) => /^fix:/.test(L)),
+    fixerPrompts.map(([L]) => L).join(','))
+  for (const [name, re] of FIXER_PINS) {
+    assert(`${name} — every fixer`, fixerPrompts.length > 0 && fixerPrompts.every(([, p]) => re.test(p)),
+      fixerPrompts.filter(([, p]) => !re.test(p)).map(([L]) => L).join(','))
+  }
+  // Fixer-only: a reviewer told "do not reject" stops REPORTING rejections, which is the opposite
+  // of what the board is for.
+  assert('no reviewer gets the fixer rules', reviewerPrompts28.length > 0 &&
+    reviewerPrompts28.every(([, p]) => !/FIX SCOPE:|FIX PROPAGATION:/.test(p)),
+    reviewerPrompts28.filter(([, p]) => /FIX SCOPE:|FIX PROPAGATION:/.test(p)).map(([L]) => L).join(','))
+
+  // --- scenario 29: the conventions template ships the ported code rules ---------------------
+  console.log('--- scenario 29: the conventions template carries the rules worth keeping ---')
+  const template = fs.readFileSync(path.join(__dirname, '..', 'implement-plan-assets', 'conventions.template.md'), 'utf8')
+  const TEMPLATE_PINS = [
+    ['shared-helper blast radius', /enumerate EVERY production call path transitively/],
+    ['guards tested per call site', /at each one assert the refusal at BOTH edges of its window/],
+    ['sentinels tested either side', /test each at the value, one below and one\s+above/],
+    ['null-equals-null lookup case', /include a case where BOTH sides are absent/],
+    ['write-back matrix', /give each cell a test or a written reason/],
+    ['detached before-snapshots', /holds detached copies,\s+never references the write can mutate/],
+    ['update paths from update siblings', /never on the read path of the same class/],
+    ['client parse errors name the field', /rethrows a validation error naming the client-facing field/],
+    ['validation doc audit: pipeline order', /check each documented status code against the REQUEST\s+PIPELINE ORDER/],
+    ['allOf branches checked by hand', /only works when EVERY composed branch permits the new value/],
+  ]
+  for (const [name, re] of TEMPLATE_PINS) assert(`template: ${name}`, re.test(template))
+  // The README's drafting prompt says no rule without evidence; without this carve-out an agent
+  // following it either copies all eight rules or deletes all eight. Both are wrong.
+  const bundleReadme = fs.readFileSync(path.join(__dirname, '..', '..', '..', 'README.md'), 'utf8')
+  assert('drafting prompt keeps a template rule only where its construct exists',
+    /Keep one only when\s+this repo has the construct it guards/.test(bundleReadme) &&
+      /Drop every rule whose construct is absent/.test(bundleReadme))
+
+  // --- scenario 30: the ported charter checks sit inside ## Covers -----------------------------
+  // A rule under "Does NOT Cover" is an instruction to IGNORE it, so the section matters.
+  console.log('--- scenario 30: ported charter checks are in scope, not out of it ---')
+  const coversOf = (name) => {
+    const text = fs.readFileSync(path.join(__dirname, '..', 'implement-plan-assets', 'reviewers', name), 'utf8')
+    const m = text.match(/## Covers\n([\s\S]*?)\n## Does NOT Cover/)
+    return m ? m[1] : ''
+  }
+  const CHARTER_PINS = [
+    ['reviewer-coverage-critical.md', 'reachable-code coverage exclusion', /An exclusion on code a\s+caller CAN reach is a finding/],
+    ['reviewer-observability-diagnostics.md', 'optional diagnostics wired everywhere', /verify the parameter is actually passed at EVERY production call site/],
+    ['reviewer-test-integrity.md', 'removed behavior must fail when it returns', /the suite must fail\s+if the removed behavior comes back/],
+    ['reviewer-test-integrity.md', 'ordering needs distinct keys', /at\s+least two DISTINCT key values/],
+    ['reviewer-test-integrity.md', 'null assertion needs a contrast case', /next to a contrast case expecting non-null/],
+  ]
+  for (const [file, name, re] of CHARTER_PINS) assert(`${file}: ${name}`, re.test(coversOf(file)))
 })()

@@ -799,7 +799,7 @@ git clone https://github.com/AugustinasNomicas/graph-engineering-claude-code
 • Say the empty-reviewer advice out loud, it is counter-intuitive: a speculative rule costs you a
   false finding on EVERY run. Let retrospect fill that file from defects that actually happened
 • First run: a dry-run mode that lists the phases, passes and reviewers and mutates nothing
-• Honest caveat for adopters: the public repo has no CI, so the 113-assertion harness only runs
+• Honest caveat for adopters: the public repo has no CI, so the 138-assertion harness only runs
   when someone runs it — `node claude/workflows/__tests__/implement-plan-workflow.test.js`
 -->
 

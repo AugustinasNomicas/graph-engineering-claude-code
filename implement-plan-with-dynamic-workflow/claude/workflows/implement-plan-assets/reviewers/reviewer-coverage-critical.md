@@ -12,6 +12,10 @@ conflicts with the test_economy reviewer.
 ## Covers
 
 - Untested critical paths: new or modified code with no corresponding test coverage
+- Coverage exclusions on reachable code: an exclusion attribute or pragma (for example
+  `[ExcludeFromCodeCoverage]`, `# pragma: no cover`, `/* istanbul ignore */`) belongs only on code no
+  caller can reach, such as a member read solely by a debugger display. An exclusion on code a
+  caller CAN reach is a finding: that code needs a test, not a waiver
 - Edge cases and boundary conditions that lack test assertions
 - Error handling paths with no test verification
 - Security-sensitive behavior with no test

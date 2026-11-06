@@ -85,6 +85,52 @@ silently picking one.
   ship with a fully green suite. Name the reference doc or captured sample that counts as
   evidence, and say that semantics verified for one field are not evidence for a sibling field.
 
+## Rules worth keeping
+
+Unlike the sections above, these are not placeholders. Each came from a defect that escaped review
+on the codebase this bundle was built in, and each is stack-agnostic. Keep the ones that apply to
+your repo and delete the rest: a rule that cannot apply here still costs every agent attention.
+
+- **Shared-helper blast radius** — when a change to a shared helper's behaviour reaches, or may
+  reach, callers outside the ticket's scope, enumerate EVERY production call path transitively
+  (grep the callers of the callers), state the full blast radius and the keep-global-or-scope-down
+  decision in a code comment, and pin each reachable path with a test. If two reviewers disagree
+  about a helper's scope, settle it with that enumeration plus the arithmetic of when behaviour
+  actually differs, never by picking a side. A comment that contradicts the decision is a defect.
+- **Every new guard is tested at every call site** — grep the guard to enumerate its production
+  call sites, and at each one assert the refusal at BOTH edges of its window and that no downstream
+  write or side effect happens. A test of the helper alone proves the logic, not the wiring.
+- **Sentinels and thresholds** — for every sentinel or threshold constant the diff touches, grep the
+  constant AND its literal value for every consumer, and test each at the value, one below and one
+  above: exact-bound branches are where windows silently stay open. When correctness depends on two
+  constants in different modules being equal, give them one source of truth or a test that asserts
+  the equality. For every string-key lookup, include a case where BOTH sides are absent:
+  `null == null` is true and silently matches missing data.
+- **Write-back matrices** — for a helper that writes a change back over existing state, enumerate
+  {absent, present but inactive, active} x {set, clear} x {inherited, owned by the edited record}
+  and give each cell a test or a written reason. Clearing a value that is already absent writes
+  nothing, in every branch. A before-snapshot compared after a mutation holds detached copies,
+  never references the write can mutate in place.
+- **Build update paths from update siblings** — model a new or changed update operation on at least
+  two existing UPDATE operations with the same keying, never on the read path of the same class.
+  Check the client's concurrency token before any write, re-apply every guard the reads apply to the
+  same downstream response, and build the response body the same way the read does.
+- **Client values decoded outside the framework's binding** — code that parses client input itself
+  catches the parse failures and rethrows a validation error naming the client-facing field. Never
+  surface a raw parser path or message, which can quote request content (log it instead), and never
+  let client input become a 500. One malformed-value test per scalar type the path accepts.
+- **Validation changes audit the docs** — when a validation rule is added, changed or removed, grep
+  the docs and API specs for example values near the changed boundary (an "accepted" example that
+  is now refused is a contradiction); check each documented status code against the REQUEST
+  PIPELINE ORDER, because an earlier validator can pre-empt it; never copy a constraint sentence
+  across sibling entities without checking each one's own rules; and if omitting a parameter now
+  means something new, say so where the parameter is documented and fix every "defaults to" claim.
+- **API schema composition** — if you publish OpenAPI, changing a property's nullability or type
+  inside `allOf` only works when EVERY composed branch permits the new value, and bundlers and
+  linters pass green on the contradiction because neither validates an instance. Walk every composed
+  branch of the bundled spec by hand, and grep the shared fragments for prose that describes the old
+  behaviour, since inherited descriptions never appear in the diff.
+
 ## Pitfalls
 
 The highest-value section, and the one retrospect grows. Each entry: the trap, the symptom it

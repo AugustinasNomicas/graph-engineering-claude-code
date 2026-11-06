@@ -26,6 +26,17 @@ Apply the Test Integrity reviewer charter to the full git diff and write structu
   tests in the file. A negative-path test must also include at least one input OUTSIDE
   the literals the implementation names, so it distinguishes default-deny from
   accidental default-allow.
+- Behavior-removal audits: when the plan REMOVES or inverts behavior, the suite must fail
+  if the removed behavior comes back -- verify this by mutation-style reasoning, not by
+  "the new tests pass". Specifically: (a) list every pre-existing test whose NAME or
+  assertion messages reference the removed behavior; each must be renamed and its
+  assertions tightened so reintroduction fails (a weak substring match that also matches the
+  old output detects nothing); (b) an ordering assertion proves direction only when it uses at
+  least two DISTINCT key values -- tied keys make an ascending and a descending sort
+  indistinguishable; (c) an assertion that a value is null detects a mapper that always returns
+  null only when it sits next to a contrast case expecting non-null; (d) check whether the diff
+  DELETED the file's only assertion of an invariant (such as start <= end) and file that as a
+  finding.
 
 ## Does NOT Cover
 

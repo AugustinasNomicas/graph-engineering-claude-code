@@ -17,6 +17,14 @@ Enable it for projects where production observability is a requirement.
 - Missing alertability: conditions that should trigger alerts but have no signal
 - Log levels that are wrong (`LogDebug` for production-critical events; `LogInformation` for noise)
 - Structured vs unstructured logging consistency (e.g. string interpolation instead of `ILogger` message templates, breaking Serilog structured fields)
+- Dead diagnostics on optional parameters: when a method takes an OPTIONAL diagnostics
+  parameter (a logger defaulting to null, a metrics hook) and its logging is documented -- in a
+  docstring, comment or plan -- as the way a silent skip, drop or degradation gets detected,
+  verify the parameter is actually passed at EVERY production call site (grep the callers; test
+  wiring does not count). If any production caller omits it, the "only detector" is dead and the
+  data-loss path is invisible: file a finding, and prefer making the parameter required or adding
+  a test that the logger is invoked through real wiring. Optional loggers look benign; that is why
+  this check is explicit
 
 ## Does NOT Cover
 

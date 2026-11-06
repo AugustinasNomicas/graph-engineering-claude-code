@@ -312,6 +312,12 @@ Write each rule as: what to do, where it applies, and what breaks when it is vio
 consequence must come from the evidence (a named test fails, a doc says so, this revert
 happened) — never from your own reasoning about what might go wrong.
 
+The template's "Rules worth keeping" section is the one exception to THE ONE RULE: those rules
+already carry evidence, from defects that escaped review on another codebase. Keep one only when
+this repo has the construct it guards — a shared helper with callers across several entities,
+sentinel or threshold constants, client input parsed outside the framework's binding, a published
+OpenAPI spec — and cite that construct (file:line). Drop every rule whose construct is absent.
+
 DO NOT WRITE:
 - anything that would apply to a repository you have never seen ("use meaningful names",
   "follow SOLID", "write tests", "handle errors") — the pipeline's 16 generic reviewer

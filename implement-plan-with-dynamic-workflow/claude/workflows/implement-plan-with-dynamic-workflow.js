@@ -222,6 +222,12 @@ function guardrailsRule() {
 function fixerRules() {
   return [
     '- FIXER ROUNDS: coverage findings from the review board are not advisory — a fixer round must implement each one as a real test, or record per finding why it is infeasible, before the run may finish.',
+    // A sentence deleted as factually wrong survived verbatim elsewhere, ten stale references
+    // outlived a member move, and a hard-coded bullet count drifted when a fix split a bullet.
+    '- FIX PROPAGATION: a fix is not applied until its other occurrences are. When a fix deletes or corrects a sentence as factually wrong, grep the repo for the same and paraphrased sentence and fix ALL occurrences in the same commit, not only the flagged line. When a fix moves, renames or deletes a member, grep the WHOLE repo (docs, code comments, test names, test failure messages, operator messages) for the old qualified name and the behaviour phrase it implemented; test failure messages and operator guidance are documentation too. After repointing callers, grep for members left with zero references and delete them in the same change. Never leave a hard-coded count of an enumerated list ("the five paths below"): reword it without the count, or re-verify the count in the same edit that changes the list.',
+    // A board fixer added a payload limit on five entities and a rejection the sibling field
+    // tolerates, after criteria verification had already run; a human reverted both.
+    '- FIX SCOPE: a fixer must not introduce a rejection, cap, limit or status code the plan does not list. Before adding any client-error refusal, cite by file:line the closest sibling that already refuses the same case (the same check on another field or entity, or the same limitation elsewhere in the codebase); if the sibling tolerates it, do not reject. If the fix changes a shared helper (a shared validator, base class or mapper), list every caller outside the scope of the plan first: any such caller turns the fix into a deferral, recorded per finding in unfixedFindingIds with the reason, with the code left alone. Turning a 500 into the 400 a sibling already returns for the same input is not new behaviour.',
     guardrailsRule(),
   ].join('\n')
 }
