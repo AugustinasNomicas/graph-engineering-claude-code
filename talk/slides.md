@@ -910,5 +910,5 @@ That last one points straight at us. Our answer: **we do not parallelise the cod
     run and 817k more for the plan. Say the plan number out loud — it surprises people
   – "who else uses it?" → six engineers on one service, 55 merged runs between 11 Jun and 4 Nov
   – "can we have it?" → yes, the link is on screen: the workflow, the charters, the installer and
-    these slides, CC BY 4.0. Install, fill in two files, dry-run with mode:"expand"
+    these slides. The workflow is MIT, the slides CC BY 4.0. Install, fill in two files, dry-run with mode:"expand"
 -->
