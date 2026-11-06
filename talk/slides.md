@@ -545,7 +545,7 @@ Verdict: **merge B**, confidence high - and it merged on Aug 12.
 
 ## The scorecard
 
-| Dimension | Weight | A - Fable 5 | B - Opus 5 | |
+| Dimension | Weight | A - Fable 5.1 | B - Opus 5.5 | |
 |---|---|---|---|---|
 | Correctness & requirements | 30 | 3 | 4 | **B** |
 | Testing | 15 | 4 | 5 | **B** |
@@ -586,7 +586,7 @@ Sorted by weight. **B wins five, ties three, loses one** - at the joint-smallest
 
 ## What each arm cost
 
-| | **A** - Fable 5, `/goal` | **B** - Opus 5, this workflow |
+| | **A** - Fable 5.1, `/goal` | **B** - Opus 5.5, this workflow |
 |---|---|---|
 | Wall-clock | **1h 15m** | **3h 39m** |
 | Output tokens | **445k** | **780k** run · **1.60M** with planning |
@@ -635,7 +635,7 @@ Same feature, one score higher: **2.9x the wall-clock, 1.8x the tokens** - 3.6x 
 • 3 — A is genuinely easier to hold in your head, and it won that dimension on merit. At equal
   correctness I would have merged A. Volume earns nothing by itself
 • 4 — the caveat an honest engineer will raise, so raise it first:
-  – the transcripts settle what the report could not: A ran Fable 5, B ran Opus 5
+  – the transcripts settle what the report could not: A ran Fable 5.1, B ran Opus 5.5
   – so this varies model AND process AND planning at once. Any of the three could carry the result
   – it shows the process produced the better PR. NOT which part did the work
   – answering that needs several tickets and a stripped-down arm. I have not run it
