@@ -1,6 +1,3 @@
----
-rework_enabled: false
----
 # Reviewer Charter: Observability and Diagnostics
 
 Apply the Observability and Diagnostics reviewer charter to the full git diff and write structured findings.
@@ -15,8 +12,8 @@ Enable it for projects where production observability is a requirement.
 - Missing distributed trace context propagation (e.g. OpenTelemetry activity/span context not flowed across async or service boundaries)
 - Error messages that lack actionable diagnostic context (no request ID, no context)
 - Missing alertability: conditions that should trigger alerts but have no signal
-- Log levels that are wrong (`LogDebug` for production-critical events; `LogInformation` for noise)
-- Structured vs unstructured logging consistency (e.g. string interpolation instead of `ILogger` message templates, breaking Serilog structured fields)
+- Log levels that are wrong (debug level for production-critical events; info level for noise)
+- Structured vs unstructured logging consistency (e.g. interpolating values into the message string instead of using the logger's message-template or structured-fields API — in .NET, bypassing `ILogger` templates breaks Serilog's structured fields)
 - Dead diagnostics on optional parameters: when a method takes an OPTIONAL diagnostics
   parameter (a logger defaulting to null, a metrics hook) and its logging is documented -- in a
   docstring, comment or plan -- as the way a silent skip, drop or degradation gets detected,

@@ -1,6 +1,3 @@
----
-rework_enabled: false
----
 # Reviewer Charter: Plan Conformance
 
 Apply the Plan Conformance reviewer charter: judge the full git diff AGAINST the approved plan
@@ -18,7 +15,7 @@ verdict when the plan itself preserves the reported defect.
 - Unimplemented plan items: entries under a phase's "### Changes Required" with no
   corresponding change in the diff
 - Partial implementations presented as complete: stubs, TODOs, or
-  `NotImplementedException` left where the plan demanded working behavior
+  not-implemented placeholders left where the plan demanded working behavior
 - Silent deviations: the diff solves the problem differently than the plan specifies
   (different file, different mechanism, different contract) with no recorded mismatch note
 - Scope creep: changes not traceable to any phase's spec, or work the plan's

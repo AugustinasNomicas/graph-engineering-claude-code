@@ -1,6 +1,3 @@
----
-rework_enabled: false
----
 # Reviewer Charter: Code Simplification
 
 Apply the Code Simplification reviewer charter to the full git diff and write structured findings.

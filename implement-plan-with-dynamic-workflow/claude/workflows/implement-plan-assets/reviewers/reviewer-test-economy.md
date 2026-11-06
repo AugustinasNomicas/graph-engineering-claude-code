@@ -1,6 +1,3 @@
----
-rework_enabled: false
----
 # Reviewer Charter: Test Economy
 
 Apply the Test Economy reviewer charter to the full git diff and write structured findings.

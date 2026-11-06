@@ -1,6 +1,3 @@
----
-rework_enabled: false
----
 # Reviewer Charter: Coverage Critical
 
 Apply the Coverage Critical reviewer charter to the full git diff and write structured findings.

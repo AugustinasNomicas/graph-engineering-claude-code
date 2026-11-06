@@ -1,6 +1,3 @@
----
-rework_enabled: false
----
 # Reviewer Charter: Safety and Correctness
 
 Apply the Safety and Correctness reviewer charter to the full git diff and write structured findings.

@@ -1,6 +1,3 @@
----
-rework_enabled: false
----
 # Reviewer Charter: Data Migration Safety
 
 Apply the Data Migration Safety reviewer charter to the full git diff and write structured findings.

@@ -1,6 +1,3 @@
----
-rework_enabled: false
----
 # Reviewer Charter: Rollout and Recovery
 
 Apply the Rollout and Recovery reviewer charter to the full git diff and write structured findings.

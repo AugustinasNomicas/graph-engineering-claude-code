@@ -1,6 +1,3 @@
----
-rework_enabled: false
----
 # Reviewer Charter: Domain Hazards
 
 <!--

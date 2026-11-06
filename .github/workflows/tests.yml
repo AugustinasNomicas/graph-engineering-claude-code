@@ -1,0 +1,45 @@
+# The orchestrator's decisions are plain JavaScript, so they are tested without a model call:
+# the harness drives the real script with stubbed agents. Run it two ways, because the bundle is
+# COPIED into other repos — once here, once from a fresh install into a scratch repo, which is the
+# only place a path assumption that holds in this repo but not in an adopter's shows up.
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  workflow:
+    name: Orchestration tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Shell scripts parse
+        run: |
+          for f in implement-plan-with-dynamic-workflow/install.sh talk/build.sh; do bash -n "$f"; done
+      - name: Run the harness in this repo
+        run: node implement-plan-with-dynamic-workflow/claude/workflows/__tests__/implement-plan-workflow.test.js
+      - name: Install into a scratch repo and run the shipped harness from there
+        run: |
+          target="$(mktemp -d)"
+          git -C "$target" init -q
+          ./implement-plan-with-dynamic-workflow/install.sh "$target"
+          cd "$target"
+          node .claude/workflows/__tests__/implement-plan-workflow.test.js
+
+  deck:
+    name: slides.html matches slides.md
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Rebuild the deck
+        run: ./talk/build.sh
+      - name: The committed HTML must be the build output
+        run: git diff --exit-code --stat -- talk/slides.html

@@ -1,6 +1,3 @@
----
-rework_enabled: false
----
 # Reviewer Charter: Dead Code
 
 Apply the Dead Code reviewer charter to the full git diff and write structured findings.
@@ -18,7 +15,7 @@ using/namespace dependencies rather than just spotting obvious unused using dire
 - Dead parameters: method parameters that are accepted but never read
 - Commented-out code blocks or dead `#region`s left in the diff (not TODOs -- actual dead logic)
 - Feature flags or conditionals that always evaluate to the same branch
-- Conditionally inert logic: a branch or guard whose precondition can never be true given how the code is actually invoked -- e.g. a cancellation-classification branch reached only with `CancellationToken.None`, or a handler for an argument value no caller supplies. Flag it as inert and ask whether it is deliberate parity/forward-compat scaffolding (which should then say so in a comment) or genuinely removable -- do not assume deletion
+- Conditionally inert logic: a branch or guard whose precondition can never be true given how the code is actually invoked -- e.g. a cancellation-classification branch reached only with a no-op cancellation token (e.g. .NET `CancellationToken.None`), or a handler for an argument value no caller supplies. Flag it as inert and ask whether it is deliberate parity/forward-compat scaffolding (which should then say so in a comment) or genuinely removable -- do not assume deletion
 - Orphaned test helpers, fixtures, or `TestUtilities` entries no longer used by any test
 - Stale configuration entries (options/settings registered but never wired, config keys read but never acted on)
 - Backwards-compatibility shims, re-exports, or aliases that no longer have consumers
@@ -49,7 +46,7 @@ For each new or modified symbol (method, class, constant, `using` directive):
 1. Search the codebase for references to that symbol
 2. If the symbol is `public`/`internal`, check whether any other namespace or assembly references it
 3. Trace parameters of new/modified methods to confirm each is actually used in the body
-4. For new conditionals/guards, check the values callers actually supply -- a branch no caller can trigger (a token always `None`, an enum case never passed, a flag pinned by config) is inert even though its symbols are "referenced"
+4. For new conditionals/guards, check the values callers actually supply -- a branch no caller can trigger (a cancellation token that is always the no-op one, an enum case never passed, a flag pinned by config) is inert even though its symbols are "referenced"
 
 Use the `## Covers` checklist above as the source of truth for findings.
 

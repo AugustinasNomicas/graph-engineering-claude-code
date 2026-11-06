@@ -1,6 +1,3 @@
----
-rework_enabled: false
----
 # Reviewer Charter: Contract Compatibility
 
 Apply the Contract Compatibility reviewer charter to the full git diff and write structured findings.

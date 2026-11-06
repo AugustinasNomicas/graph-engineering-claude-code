@@ -1,6 +1,3 @@
----
-rework_enabled: false
----
 # Reviewer Charter: Maintainability and Design
 
 Apply the Maintainability and Design reviewer charter to the full git diff and write structured findings.

@@ -1,6 +1,3 @@
----
-rework_enabled: false
----
 # Reviewer Charter: Security
 
 Apply the Security reviewer charter to the full git diff and write structured findings.

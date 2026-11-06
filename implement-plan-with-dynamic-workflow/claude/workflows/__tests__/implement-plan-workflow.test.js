@@ -248,7 +248,7 @@ function assert(name, cond, extra) {
     /MISSING GENERATED OR DERIVED SOURCES/.test(wfSrc) && /Never hand-write or stub a generated file/.test(wfSrc)
   )
   assert('the recovery step is conditional on a distinct fast build', /hasFastBuild\(\)/.test(wfSrc))
-  assert('no stack-specific command leaked into the script', !/dotnet |npm run |cargo |pytest/.test(wfSrc))
+  assert('no stack-specific command or type leaked into the script', !/dotnet |npm run |cargo |pytest|NotImplementedException|IHostedService|ILogger/.test(wfSrc))
 
   console.log('--- scenario 8: EVERY gate agent dies (the old fail-open) ---')
   const s8 = await run({ args: baseArgs, nullFor: (L) => /^gate:/.test(L) })
@@ -440,6 +440,38 @@ function assert(name, cond, extra) {
   assert('clean checkout: the board ran', s19b.calls.filter((c) => /^board:/.test(c.label || '')).length === 11, s19b.calls.filter((c) => /^board:/.test(c.label || '')).length + ' board calls')
   assert('clean checkout: gates ran without the sync gate', ['build', 'test', 'qa'].every((g) => s19b.calls.some((c) => c.label === 'gate:' + g)) && !s19b.calls.some((c) => c.label === 'gate:sync'))
   assert('review mode never finalizes', !s19b.calls.some((c) => /^(criteria-reverify|branch-hygiene)$/.test(c.label || '')) && !('readyForPr' in s19b.result))
+
+  console.log('--- scenario 20: malformed overrides fail fast, and a pinned reviewer needs a charter ---')
+  // `reviewers` and `toolchain` used to be trusted verbatim: a typo'd reviewer reached the board
+  // pointed at a charter file that did not exist (and returned findings:[], i.e. a clean review), a
+  // string toolchain spread its characters, and a misspelt key was ignored while the profile's own
+  // command ran under the caller's belief that they had overridden it.
+  const noAgents = (s) => s.calls.length === 0
+  const s20a = await run({ args: Object.assign({}, baseArgs, { reviewers: ['Security', 'dead-code'] }) })
+  assert('capitalised reviewer name is refused before any agent runs', s20a.result.error === 'invalid reviewers' && noAgents(s20a), JSON.stringify(s20a.result))
+  assert('and the log names the bad entry', s20a.logs.some((m) => /"Security"/.test(m) && /reviewer-<name>\.md/.test(m)))
+  const s20b = await run({ args: Object.assign({}, baseArgs, { reviewers: [] }) })
+  assert('empty reviewers list is refused (it would silently select nobody)', s20b.result.error === 'invalid reviewers' && noAgents(s20b))
+  const s20c = await run({ args: Object.assign({}, baseArgs, { toolchain: 'fake test' }) })
+  assert('string toolchain is refused', s20c.result.error === 'invalid toolchain override' && noAgents(s20c))
+  const s20d = await run({ args: Object.assign({}, baseArgs, { toolchain: { test_command: 'x' } }) })
+  assert('misspelt toolchain key is refused and named', s20d.result.error === 'invalid toolchain override' && noAgents(s20d) && s20d.logs.some((m) => /unknown key\(s\) test_command/.test(m) && /Valid keys: /.test(m)))
+  const s20e = await run({ args: Object.assign({}, baseArgs, { toolchain: { test_cmd: 42 } }) })
+  assert('non-string toolchain value is refused', s20e.result.error === 'invalid toolchain override' && noAgents(s20e))
+  // Shape passes; existence is the load-profile agent's job, so the prompt must ask and the
+  // script must stop on the answer.
+  let profilePrompt20 = ''
+  const s20f = await run({
+    args: Object.assign({}, baseArgs, { reviewers: ['security', 'dead-code'] }),
+    profile: { missingCharters: ['dead-code'] },
+    capturePrompt: (L, p) => { if (L === 'load-profile') profilePrompt20 = p },
+  })
+  assert('load-profile is asked to check the pinned reviewers\' charters', /pinned: security, dead-code/.test(profilePrompt20) && /missingCharters/.test(profilePrompt20) && /domainReviewer/.test(profilePrompt20))
+  assert('a missing charter stops the run after load-profile', s20f.result.error === 'missing reviewer charters' && s20f.calls.length === 1, s20f.calls.map((c) => c.label).join(','))
+  assert('and names it', (s20f.result.missingCharters || []).join() === 'dead-code' && s20f.logs.some((m) => /No charter file for reviewer\(s\) dead-code/.test(m)))
+  const s20g = await run({ args: Object.assign({}, baseArgs, { reviewers: ['security', 'dead-code'] }) })
+  assert('a valid pinned list runs exactly those two and no plan-conformance', s20g.calls.filter((c) => /^board:/.test(c.label || '')).map((c) => c.label).sort().join() === 'board:dead-code,board:security')
+  assert('the default profile fixture passes the charter check', s20g.result.readyForPr === true)
 
   console.log('--- scenario 16b: phase agents diff against THEIR phase anchor SHA ---')
   // They used to be handed the CUMULATIVE diff and told to narrow by eye. Measured on a real branch

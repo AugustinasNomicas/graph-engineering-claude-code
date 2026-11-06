@@ -1,6 +1,3 @@
----
-rework_enabled: false
----
 # Reviewer Charter: Test Integrity
 
 Apply the Test Integrity reviewer charter to the full git diff and write structured findings.
@@ -16,7 +13,7 @@ Apply the Test Integrity reviewer charter to the full git diff and write structu
 - Tests that would not catch the bug they appear to test
 - Tautological / no-op-passing assertions: a test that would still pass if the SUT did
   nothing. Three forms to flag: (a) asserting a value equals a framework/library default
-  the SUT does not set (e.g. HttpClient's 100s Timeout) -- seed a distinctive sentinel
+  the SUT does not set (e.g. .NET HttpClient's 100s Timeout) -- seed a distinctive sentinel
   the default cannot produce and assert the sentinel survives; (b) a negative-inequality
   guard (`NotBe(someDefault)`) used to prove a value's provenance -- replace with
   positive equality against a controlled sentinel; (c) a test left asserting only a

@@ -1,6 +1,3 @@
----
-rework_enabled: false
----
 # Reviewer Charter: Reliability and Performance
 
 Apply the Reliability and Performance reviewer charter to the full git diff and write structured findings.
@@ -10,7 +7,7 @@ Apply the Reliability and Performance reviewer charter to the full git diff and 
 - Algorithmic complexity regressions (O(n^2) where O(n) is feasible)
 - N+1 query patterns in database or I/O access, including ORM lazy-loading in a loop
 - Resource leaks on the SUCCESS path (database sessions and connections, file handles, locks not released after success)
-- Blocking operations in async/await contexts (sync-over-async, `.Result`/`.Wait()` on a Task)
+- Blocking operations in async/await contexts (sync-over-async, e.g. .NET `.Result`/`.Wait()` on a Task)
 - Excessive or redundant I/O operations (reading same file repeatedly, unnecessary round trips)
 - Scalability bottlenecks: unbounded memory growth, accumulation of state
 - Negative/fallback caching that outlives the outage: an error fallback, empty result, or degraded-mode default cached with a TTL longer than the failure it papers over, so stale/degraded values keep being served after the dependency recovers (e.g. an "unresolved -> use the raw id" fallback cached for minutes past DB/HTTP recovery); missing or over-long negative-cache TTLs

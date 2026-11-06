@@ -206,9 +206,13 @@ function conventionsBlock() {
     )
   lines.push(
     '- Follow the patterns already present in the code you are touching rather than introducing new ones; a change that reads like the surrounding code is worth more than a cleverer one.',
-    '- Run the relevant tests through the test-runner discipline' +
-      (tc.test_cmd ? ' (' + tc.test_cmd + ')' : '') +
-      ', not ad-hoc; keep the build warning-clean.'
+    // The SCOPE to run is set per pass below (a pass self-checks only what it touched; the Test
+    // gate runs the whole suite once). This rule is only about WHICH command family: the
+    // sanctioned one, never an ad-hoc invocation — an earlier wording named the full suite here
+    // while the pass body said not to run it, two instructions in one prompt pulling apart.
+    '- Run tests only through the sanctioned test command' +
+      (tc.test_cmd ? ' (' + tc.test_cmd + ', or its scoped form)' : '') +
+      ', never an ad-hoc invocation; the scope to run is given below. Keep the build warning-clean.'
   )
   return lines.join('\n')
 }
@@ -486,6 +490,8 @@ const REPO_PROFILE_SCHEMA = {
     qaExtraSteps: { type: 'array', items: { type: 'string' } },
     testFilterNote: { type: ['string', 'null'] },
     warnings: { type: 'array', items: { type: 'string' } },
+    // Reviewer names (domainReviewer, pinned `reviewers`) whose charter file does not exist.
+    missingCharters: { type: 'array', items: { type: 'string' } },
   },
   required: ['found'],
 }
@@ -785,8 +791,11 @@ function repoProfilePrompt() {
 2. If that file does NOT exist, set found=false and return everything else null/empty — the workflow will stop and tell the operator to create it. Do NOT invent commands, and do NOT guess them from the repo contents: a wrong build or test command silently invalidates every gate in the run.
 3. If it exists, parse the JSON and return its fields verbatim: repoLabel, toolchain{restore_cmd, build_verify_cmd, test_cmd, format_cmd, lint_cmd, and the three OPTIONAL speed keys build_fast_cmd, test_no_build_cmd, test_scoped_shape — return "" for any the profile omits, never a guess}, conventionsDoc, archDoc, domainReviewer, qaExtraSteps[], testFilterNote.
 4. Sanity-check and report problems in warnings[] WITHOUT fixing them: a missing build_verify_cmd or test_cmd; a test_scoped_shape that is a runnable command rather than a template with a placeholder (it is shown to agents as a shape to fill in, not executed as-is); a conventionsDoc, archDoc or reviewer-<domainReviewer>.md charter path that does not exist on disk; a toolchain command naming a file or directory that is absent; and \`.claude/ai/\` NOT being gitignored (\`git check-ignore -q .claude/ai/probe.md\` exits non-zero) — the workflow treats that directory as internal scratch state (plan snapshots, retrospect proposals) and force-adds into it on the assumption that nothing there is tracked. These are the operator's mistakes to fix, not yours to paper over.
+5. Charters: every board reviewer reads \`<repoRoot>/${BOARD_REL}/reviewer-<name>.md\` as its source of truth, and a reviewer pointed at a missing file returns no findings, which reads as a clean review. Check that the file exists for domainReviewer${
+     reviewersOverride ? ` and for each reviewer the caller pinned: ${reviewersOverride.join(', ')}` : ''
+   }. Return the names whose charter is MISSING in missingCharters[] (empty when all exist).
 
-Return {found, repoLabel, toolchain{...}, conventionsDoc, archDoc, domainReviewer, qaExtraSteps[], testFilterNote, warnings[]}.`
+Return {found, repoLabel, toolchain{...}, conventionsDoc, archDoc, domainReviewer, qaExtraSteps[], testFilterNote, warnings[], missingCharters[]}.`
 }
 
 function parsePrompt(planPath) {
@@ -886,7 +895,7 @@ function phasePassPrompt(phaseSpec, pass, prevSummary, ctx) {
   if (pass === 'spec_tests') {
     body = `This is the SPEC-TESTS (test-first) pass for the phase. Translate the phase specification and its Automated success criteria into concrete tests BEFORE any real implementation exists:
 - Write the tests the finished phase must satisfy: the happy path plus the edge and boundary cases the conventions doc demands.
-- Where tests reference types/members that do not exist yet, add MINIMAL compilable stubs (correct signatures; throw NotImplementedException or return defaults) — just enough that the solution builds and the new tests FAIL (red) for the right reason.
+- Where tests reference types/members that do not exist yet, add MINIMAL compilable stubs (correct signatures; throw a not-implemented error or return defaults) — just enough that the solution builds and the new tests FAIL (red) for the right reason.
 - Do NOT implement the real behavior — that is the next pass.`
   } else if (pass === 'initial') {
     body = `This is the INITIAL implementation pass for the phase. First read ${
@@ -1694,6 +1703,43 @@ if (!planRef && !['review', 'retrospect'].includes(mode)) {
   log('No plan reference. Pass args:{plan:".claude/ai/plan-....md"} (or use mode:"review" / mode:"retrospect").')
   return { error: 'missing plan reference', mode }
 }
+// `reviewers` names charter files, so gate the SHAPE here (a lowercase hyphenated slug) and let the
+// load-profile agent confirm each charter EXISTS. Unchecked, a typo reached the board as a reviewer
+// pointed at a file that is not there; it returned findings:[] and read as a clean review.
+const CHARTER_SLUG = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/
+if (reviewersOverride) {
+  const bad = reviewersOverride.filter((r) => typeof r !== 'string' || !CHARTER_SLUG.test(r))
+  if (!reviewersOverride.length || bad.length) {
+    log(
+      `Invalid reviewers list ${JSON.stringify(reviewersOverride)}: ${
+        reviewersOverride.length ? `${JSON.stringify(bad)} — each entry` : 'it is empty — each entry'
+      } must be a lowercase hyphenated charter name such as "security" or "dead-code" (the <name> of reviewers/reviewer-<name>.md), and the list must not be empty.`
+    )
+    return { error: 'invalid reviewers', mode, reviewers: reviewersOverride }
+  }
+}
+// `toolchain` is spread over the profile with Object.assign, so without this a string override
+// would spread its characters and a misspelt key (test_command) would be ignored while the
+// profile's own test_cmd ran — with the caller believing they had overridden it.
+const TOOLCHAIN_KEYS = Object.keys(FALLBACK_REPO_PROFILE.toolchain)
+if (a.toolchain !== undefined) {
+  const tco = a.toolchain
+  const isObj = !!tco && typeof tco === 'object' && !Array.isArray(tco)
+  const badKeys = isObj ? Object.keys(tco).filter((k) => !TOOLCHAIN_KEYS.includes(k)) : []
+  const badVals = isObj ? Object.keys(tco).filter((k) => typeof tco[k] !== 'string') : []
+  if (!isObj || badKeys.length || badVals.length) {
+    log(
+      `Invalid toolchain override: ${
+        !isObj
+          ? 'it must be an object of string commands'
+          : [badKeys.length ? `unknown key(s) ${badKeys.join(', ')}` : '', badVals.length ? `non-string value(s) for ${badVals.join(', ')}` : '']
+              .filter(Boolean)
+              .join('; ')
+      }. Valid keys: ${TOOLCHAIN_KEYS.join(', ')}.`
+    )
+    return { error: 'invalid toolchain override', mode, toolchain: tco }
+  }
+}
 
 // LOAD PROFILE: prompts interpolate the toolchain commands, so the profile must resolve before
 // any prompt is built. Every mode loads it (retrospect needs the conventions-doc path to aim its
@@ -1734,6 +1780,13 @@ if (!loadedProfile || loadedProfile.found !== true) {
     return { error: 'incomplete repo profile toolchain', profilePath: REPO_PROFILE_REL, mode, toolchain: tc }
   }
   ;(loadedProfile.warnings || []).forEach((w) => log(`Profile warning: ${w}`))
+  const missingCharters = (loadedProfile.missingCharters || []).filter(Boolean)
+  if (gatingMode && missingCharters.length) {
+    log(
+      `No charter file for reviewer(s) ${missingCharters.join(', ')} — expected ${BOARD_REL}/reviewer-<name>.md for each. A reviewer with no charter returns no findings and reads as a clean review, so the run will not start.`
+    )
+    return { error: 'missing reviewer charters', mode, missingCharters }
+  }
   log(
     `Profile: ${REPO_LABEL} | conventions ${REPO_PROFILE.conventionsDoc}${REPO_PROFILE.archDoc ? ` | arch ${REPO_PROFILE.archDoc}` : ''} | domain reviewer ${REPO_PROFILE.domainReviewer}${Object.keys(toolchainOverride).length ? ' | toolchain partly overridden by args' : ''}`
   )

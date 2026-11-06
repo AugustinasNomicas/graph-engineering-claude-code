@@ -1,6 +1,3 @@
----
-rework_enabled: false
----
 # Reviewer Charter: Error Message Quality
 
 Apply the Error Message Quality reviewer charter to the full git diff and write structured findings.
@@ -44,7 +41,7 @@ If no files changed (`--name-only` returns empty), use `done` with comment "No f
 
 Read the diff in full before writing any findings.
 
-For every `catch`, `throw`, `ILogger` error log, `Console`/process-exit error output, HTTP error response,
+For every `catch`, `throw`, logger error call, `Console`/process-exit error output, HTTP error response,
 or error string in the diff, ask:
 1. Would a non-technical user understand this message?
 2. Does it tell them what went wrong in plain language?
