@@ -782,8 +782,10 @@ git clone https://github.com/AugustinasNomicas/graph-engineering-claude-code
 • install.sh refuses a target that is not a git repo (the workflow makes worktrees off it), and it
   never overwrites — existing files are reported and skipped, so re-running after an update shows
   you exactly what you had diverged
-• Size, if asked: ~2,000 lines of JavaScript, 17 reviewer charters as markdown, two commands, four
+• Size, if asked: ~2,000 lines of JavaScript, 17 reviewer charters as markdown, two commands, five
   agents, a skill doc, and a test harness over the script's own decisions. 29 files in .claude/
+• Both files on the slide ship as TEMPLATES — repo-profile.example.json and conventions.template.md.
+  The installer prints the two copy commands as its next steps, so nobody has to remember them
 • The script is STACK-AGNOSTIC on purpose: nothing in it names .NET. Everything local lives in the
   two files on this slide, which is what makes it portable between repos at all
 • The profile is the only file you MUST fill in. Two keys are required and a run refuses to start
