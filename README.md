@@ -31,7 +31,7 @@ skills/commands/agents layout.
 ## Where the numbers come from
 
 Every figure in the talk comes from one team running this workflow on one .NET service, June to
-November 2026: 55 unattended runs, each merged as a production PR. Treat them as a worked example
+November 2026: 76 unattended runs, each merged as a production PR. Treat them as a worked example
 of how to measure your own graph, not as a benchmark.
 
 ## License

@@ -669,18 +669,22 @@ Every fix a person made after a run is **an example of what the pipeline missed*
 
 ## Results so far
 
-- **55 runs on its own** (Jun 11 – Nov 4) → merged production PRs
+- **76 runs on its own** (Jun 11 – Nov 6) → merged production PRs
 - Review board: **313 fix commits**, about **6 per run**, averaging +84 / −27 lines
 - Rules and reviewer jobs **fed back from what people fixed by hand**
 
 
 <!--
-• Scope: the run count is MERGED PRs off an `implement-plan/*` branch, re-counted 6 Nov.
-  58 such PRs exist: 55 merged · 3 closed unmerged · none open. Five months, one service
+• Scope: a run counts if its MERGED PR either came off an `implement-plan/*` branch OR carries the
+  workflow's `Implplan:` commit trailers. Re-counted 6 Nov: 76 merged PRs, five months, one service
+  – BOTH tests are needed: 21 runs predate the trailer (all on `implement-plan/*`), and another 21
+    ran IN PLACE on a ticket branch (feature/…, plain ticket names), so they never got the prefix
+  – counting the prefix alone gives 55 and shows a fake usage cliff after August (2, 4, 1 a month).
+    The real rate held: 7, 12 and 5 runs in Sep, Oct and early Nov
 • The service: event-stream projections and a REST API over a .NET payroll back end
 • Every number here is countable from git. Say how, if asked:
-  – runs: only this workflow creates an `implement-plan/*` branch, and the interactive command
-    creates no branch at all → every one of the 55 is an UNATTENDED run
+  – runs: only this workflow creates an `implement-plan/*` branch or writes an `Implplan:` trailer,
+    and the interactive command does neither → every one of the 76 is an UNATTENDED run
   – board fixes: every fix-wave commit carries an `Implplan: board-review-fix` trailer
   – squash-merging PRESERVES trailers in the merge commit body → still countable in main
   – count trailer LINES, not commits: `git log --grep` returns 66, because one squash commit
@@ -688,10 +692,9 @@ Every fix a person made after a run is **an example of what the pipeline missed*
   – the line averages cover the 102 fix commits still on live branches; a squash loses per-commit
     diffs. They EXCLUDE squash commits, which carry the trailer but whose diff is the whole PR —
     leaving those in reports ~+800 per "fix", an artefact rather than a measurement
-• HONEST CAVEAT on "about 6 per run": the trailer did not exist for June's 14 runs, so 313 is
-  spread over the 41 runs that could carry it — nearer 8 each. Quote 6 as the conservative figure
-  and give the 8 if someone digs. The trend is real either way: later runs carry more board fixes,
-  because the board grew and the tickets got bigger
+• "About 6 per run" uses the right denominator: 313 fixes over the 55 runs that carry the trailer
+  at all. Dividing by all 76 would understate it (~4), because the 21 earliest runs could not
+  record a fix even when they made one
 • Several guardrails came out of retrospect, not design
   – the clean-branch check · re-verifying criteria after fixes · the sync-first QA gate
 • This is the aggregate picture. Per-ticket evidence was the A/B earlier
@@ -908,7 +911,7 @@ That last one points straight at us. Our answer: **we do not parallelise the cod
     dimensions, same ticket and same day, and the human review still found things both arms missed
   – "how much does it use?" → one ticket: 69 agents, 3h39m unattended, 780k output tokens for the
     run and 817k more for the plan. Say the plan number out loud — it surprises people
-  – "who else uses it?" → six engineers on one service, 55 merged runs between 11 Jun and 4 Nov
+  – "who else uses it?" → six engineers on one service, 76 merged runs between 11 Jun and 6 Nov
   – "can we have it?" → yes, the link is on screen: the workflow, the charters, the installer and
     these slides. The workflow is MIT, the slides CC BY 4.0. Install, fill in two files, dry-run with mode:"expand"
 -->

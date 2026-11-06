@@ -36,7 +36,7 @@ npx --yes @mermaid-js/mermaid-cli -i presentation-flow.mmd -o presentation-flow.
 
 ## What the numbers are
 
-Every figure comes from one team, one .NET service, June to November 2026: 55 unattended runs of
+Every figure comes from one team, one .NET service, June to November 2026: 76 unattended runs of
 one dynamic workflow, each merged as a production PR. They are evidence that the shape *can* pay
 off and a worked example of how to measure your own — not a benchmark, and not a forecast for your
 codebase. The A/B comparison is a single ticket with three variables moving at once, and the deck
