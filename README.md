@@ -36,4 +36,7 @@ of how to measure your own graph, not as a benchmark.
 
 ## License
 
-[CC BY 4.0](LICENSE) — reuse and adapt it, with attribution.
+- **The workflow** — [`implement-plan-with-dynamic-workflow/`](implement-plan-with-dynamic-workflow/)
+  is [MIT](implement-plan-with-dynamic-workflow/LICENSE). Use it, change it, ship it.
+- **Everything else** — the talk, its slides, notes and diagram — is [CC BY 4.0](LICENSE): reuse
+  and adapt it, with attribution.
