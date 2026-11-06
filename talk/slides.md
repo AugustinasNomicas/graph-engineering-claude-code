@@ -266,7 +266,7 @@ The only **barriers** are where a stage genuinely needs the whole set.
 <!--
 • Name the shapes as you walk it.
 • Each phase is a small diamond: reviewers fan out, one fixer merges.
-• The board is the big one: 13 reviewers fan out, merge-findings reduces, the checkers fan out again per group.
+• The board is the big one: 12 reviewers fan out, merge-findings reduces, the checkers fan out again per group.
 • A barrier is a point where everything upstream must arrive before anything downstream starts — and we only have two, both of which earn it: merge-findings genuinely needs every reviewer's output to dedupe across them, and the fix waves need the full set to work out which files overlap.
 • The sync gate merges the base branch before build and tests, so the recorded results apply to the post-merge tree.
 -->
@@ -364,11 +364,11 @@ This is **adversarial verification** - the fix for a model preferring its own ou
 
 All the changes go to **one specialist reviewer per job description, all in parallel**:
 
-- **11 general reviewers** - correctness, security, tests, docs, performance…
+- **10 general reviewers** - correctness, security, tests, performance…
 - **1 local-problems reviewer** - the mistakes *this repo has already paid for*
 - **`plan-conformance`** - the only one that reads the *plan*
 
-**Fan out, then synthesize**: 13 reviews take **as long as one review**.
+**Fan out, then synthesize**: 12 reviews take **as long as one review**.
 
 
 <!--
@@ -394,7 +394,6 @@ All the changes go to **one specialist reviewer per job description, all in para
 | `coverage-critical` | Missing tests; protects sole coverage | LOW |
 | `error-message-quality` | Useful errors that leak nothing | LOW |
 | `code-simplification` | Copy-paste, needless layers | LOW |
-| `doc-conformance` | Docs that no longer match the code | LOW |
 | *domain-hazards* | Mistakes this repo already paid for | LOW |
 | `reliability-performance` | N+1 queries, slow paths, leaks | MEDIUM |
 | `test-economy` | Tests that repeat each other | MEDIUM |
@@ -431,7 +430,7 @@ All the changes go to **one specialist reviewer per job description, all in para
 |---|---|---|
 | `plan + worktree` | Read the plan; branch off the base, copy the plan in, **build once** | 2, sequential |
 | `Phase 1 … N` | Write, get reviewed by someone else, get graded. **Sequential** | 2-6 per phase |
-| `safety` … `your domain` | The board: one read-only specialist per job description | 13, parallel |
+| `safety` … `your domain` | The board: one read-only specialist per job description | 12, parallel |
 | `merge findings` | Drop duplicates, settle disagreements, group by file. **Barrier** | 1 |
 | `check A/B/C` | Each finding vs the real code: real / already fixed / can't confirm | 1 per group, parallel |
 | `fix in waves` | Apply what survived. **Waves in sequence, the groups inside a wave in parallel** - file overlap worked out **in code**. **Barrier** | 1 per group |
