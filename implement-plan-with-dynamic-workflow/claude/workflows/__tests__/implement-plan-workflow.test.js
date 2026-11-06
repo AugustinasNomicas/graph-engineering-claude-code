@@ -100,6 +100,7 @@ async function run(scenario) {
         // AFTER the literal so it wins. A scenario can hand back a different phase list — or none.
         ...(scenario.phasesOverride ? { phases: scenario.phasesOverride } : {}),
       }
+    if (L === 'resolve-ctx') return scenario.reviewCtx || { worktreePath: '/wt', base: 'origin/main', repoRoot: '/repo' }
     if (L === 'worktree' || L === 'in-place-setup')
       return { worktreePath: '/wt', branch: 'implement-plan/x', base: 'origin/main', repoRoot: '/repo', planInWorktree: '.claude/ai/p.md' }
     if (/^phase\d+:(initial|edge_cases|spec_tests)$/.test(L)) {
@@ -415,6 +416,30 @@ function assert(name, cond, extra) {
   assert('pass prompt falls back to the full build', /fake build/.test(passPrompt) && !/--fast/.test(passPrompt))
   assert('pass prompt still demands a scoped run in prose', /scope `fake test-all` down to the affected/.test(passPrompt))
   assert('no recovery step when there is no distinct fast build', !/MISSING GENERATED OR DERIVED SOURCES/.test(passPrompt))
+
+  console.log('--- scenario 19: review mode commits, so it is gated like an in-place run ---')
+  // The board's fix waves and the QA gate commit onto the checked-out branch. Delegate's in-place
+  // path refuses a dirty tree and the default branch (setupInPlacePrompt); review mode had neither
+  // gate, so pointing it at a dirty checkout or at main committed into it. The gate lives in the
+  // resolve-ctx PROMPT (the script has no filesystem access), so pin its wording AND the script's
+  // handling of the refusal: a null worktreePath must stop the run before any agent touches the tree.
+  let ctxPrompt = ''
+  const s19 = await run({
+    args: { mode: 'review' },
+    reviewCtx: { worktreePath: null, base: 'origin/main', repoRoot: '/repo', error: 'working tree not clean — review mode commits' },
+    capturePrompt: (L, p) => { if (L === 'resolve-ctx') ctxPrompt = p },
+  })
+  assert('ctx prompt carries the clean-tree gate', /status --porcelain/.test(ctxPrompt) && /must be EMPTY/.test(ctxPrompt) && /Do not stash or discard/.test(ctxPrompt))
+  assert('ctx prompt carries the default-branch gate', /rev-parse --abbrev-ref HEAD/.test(ctxPrompt) && /default branch/.test(ctxPrompt) && /Do not create or switch branches/.test(ctxPrompt))
+  assert('ctx prompt says the run is not read-only', /NOT read-only/.test(ctxPrompt) && /COMMIT/.test(ctxPrompt))
+  assert('a refused checkout stops before the board', !s19.calls.some((c) => /^(board:|gate:|synthesis|triage:|fix:)/.test(c.label || '')), s19.calls.map((c) => c.label).join(','))
+  assert('and the refusal reason reaches the log', s19.logs.some((m) => /Could not resolve the review worktree: working tree not clean/.test(m)), s19.logs.join(' | '))
+  assert('result names the error', s19.result.error === 'unresolved worktree' && s19.result.mode === 'review')
+  // The clean path, for contrast: the board and gates run, nothing from delegate's finalize does.
+  const s19b = await run({ args: { mode: 'review' } })
+  assert('clean checkout: the board ran', s19b.calls.filter((c) => /^board:/.test(c.label || '')).length === 11, s19b.calls.filter((c) => /^board:/.test(c.label || '')).length + ' board calls')
+  assert('clean checkout: gates ran without the sync gate', ['build', 'test', 'qa'].every((g) => s19b.calls.some((c) => c.label === 'gate:' + g)) && !s19b.calls.some((c) => c.label === 'gate:sync'))
+  assert('review mode never finalizes', !s19b.calls.some((c) => /^(criteria-reverify|branch-hygiene)$/.test(c.label || '')) && !('readyForPr' in s19b.result))
 
   console.log('--- scenario 16b: phase agents diff against THEIR phase anchor SHA ---')
   // They used to be handed the CUMULATIVE diff and told to narrow by eye. Measured on a real branch

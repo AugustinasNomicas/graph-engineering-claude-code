@@ -462,7 +462,7 @@ All the changes go to **one specialist reviewer per job description, all in para
 ## Safety rules
 
 - **A person at both ends** - you approve the plan going in, and it never opens the PR itself; it only reports whether the branch is worth one
-- **Its own git worktree** - your checkout is untouched *(unless you pass `noWorktree`)*
+- **Its own git worktree** - your checkout is untouched *(unless you pass `noWorktree` - or use `review` mode, which commits onto the branch you give it)*
 - **A dead agent is a FAILED step, never a missing one** - anything left unproven fails closed
 - **Read-only roles** - by instruction, *not* by a sandbox
 - **Merged with the latest `main` first** - build and tests then run on the merged tree, and a conflict fails the gate instead of landing on you
@@ -816,7 +816,7 @@ git clone https://github.com/AugustinasNomicas/graph-engineering-claude-code
 ```
 
 - `mode:"expand"` - shows what it would do, changes nothing
-- `mode:"review"` - board + gates on any branch you already have
+- `mode:"review"` - board + gates on a branch you already have. **It commits fixes onto it**, so it wants a clean tree and refuses the default branch
 - `mode:"retrospect"` - mines past runs for rules, proposes only
 
 

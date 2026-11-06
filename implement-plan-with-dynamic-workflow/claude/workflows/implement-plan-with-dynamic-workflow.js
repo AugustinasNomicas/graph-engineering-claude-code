@@ -1,7 +1,7 @@
 export const meta = {
   name: 'implement-plan-with-dynamic-workflow',
   description: 'Autonomously implement an approved phase-based plan (the /create-plan format) as a background multi-agent workflow: a dedicated git worktree (or the current checkout in place with noWorktree), each phase implemented by a complexity-driven pass chain plus external reviewer/fixer rounds and independent criteria verification, then a parallel review board + Sync/Build/Test/QA gates over the diff.',
-  whenToUse: 'When you have an approved phase-based implementation plan (## Phase N + **Complexity** + ### Success Criteria, from /create-plan) and want it driven end to end without supervision. delegate (default): worktree + per-phase implementation (pass chain -> external review -> criteria verification) + review board + Sync/Build/Test/QA. expand: dry-run preview (phases, passes, board roster) — mutates nothing. review: gate-only over an existing worktree/diff. retrospect: mine human follow-up commits on past implement-plan branches and propose convention/charter additions (propose-only). Args: {plan, mode?, profile?, base?, reviewers?, testFirst?, noWorktree?, branches?, toolchain?, worktreePath?}.',
+  whenToUse: 'When you have an approved phase-based implementation plan (## Phase N + **Complexity** + ### Success Criteria, from /create-plan) and want it driven end to end without supervision. delegate (default): worktree + per-phase implementation (pass chain -> external review -> criteria verification) + review board + Sync/Build/Test/QA. expand: dry-run preview (phases, passes, board roster) — mutates nothing. review: board + gates over an existing branch — NOT read-only: it commits board fixes and QA formatting onto that branch, so it requires a clean tree and refuses the default branch. retrospect: mine human follow-up commits on past implement-plan branches and propose convention/charter additions (propose-only). Args: {plan, mode?, profile?, base?, reviewers?, testFirst?, noWorktree?, branches?, toolchain?, worktreePath?}.',
   phases: [
     { title: 'Load profile', detail: 'Read the repository profile (toolchain commands, conventions doc, domain reviewer) that localizes this run' },
     { title: 'Parse', detail: 'Read the plan (+ the architecture doc if the profile names one); extract phases, per-phase complexity, success criteria, issue tracker key (commit/PR prefix), shared context' },
@@ -704,6 +704,8 @@ const REVIEW_CTX_SCHEMA = {
     worktreePath: { type: ['string', 'null'] },
     base: { type: 'string' },
     repoRoot: { type: ['string', 'null'] },
+    // Set with worktreePath=null when a safety gate refused the checkout (dirty tree, default branch).
+    error: { type: 'string' },
   },
   required: ['worktreePath', 'base'],
 }
@@ -1162,20 +1164,24 @@ The workflow force-added an internal plan snapshot (${planInWorktree || 'a .clau
 Return {stripped, cleanDiff, offendingPaths:[...], notes}. cleanDiff=true ONLY when the ${base}...HEAD diff has zero .claude/ai/ or git-check-ignored paths.`
 }
 
+// Review mode is NOT read-only, and this prompt is where that is enforced: the board's fix waves
+// and the QA gate both COMMIT onto whatever branch is checked out at worktreePath. The delegate
+// path gets the same protection from setupInPlacePrompt (clean tree, never the default branch);
+// review mode used to get neither, so pointing it at a dirty checkout or at main committed into it.
 function reviewCtxPrompt() {
-  return `Resolve the review context for a gate-only run on ${REPO_LABEL}. READ-ONLY apart from git read commands.
+  return `Resolve the review context for a board-and-gates run on ${REPO_LABEL}. Use git READ commands only — but the run you are preparing is NOT read-only: its fix waves and QA gate COMMIT onto the branch checked out at worktreePath, so your job includes REFUSING a checkout that is unsafe to commit into.
 
 1. repoRoot = \`git rev-parse --show-toplevel\`.
 2. worktreePath = ${
     worktreePathArg ? `"${worktreePathArg}"` : 'repoRoot (review the current checkout)'
   }.
-3. base = ${
-    baseOverride
-      ? `"${baseOverride}"`
-      : 'origin/<default>, where default = `git -C <worktreePath> symbolic-ref --short refs/remotes/origin/HEAD | sed \'s#^origin/##\'` (fallback "main")'
-  }.
+3. default = \`git -C <worktreePath> symbolic-ref --short refs/remotes/origin/HEAD | sed 's#^origin/##'\` (fallback "main"); base = ${
+    baseOverride ? `"${baseOverride}"` : '"origin/<default>"'
+  }. Compute base BEFORE the gates below and return it even when you stop.
+4. SAFETY GATE — clean tree: \`git -C <worktreePath> status --porcelain\` must be EMPTY. If it is not, STOP: return worktreePath=null and error="working tree not clean — review mode commits board fixes and QA formatting onto the current branch; commit or stash first". Do not stash or discard anything yourself.
+5. SAFETY GATE — not the default branch: if \`git -C <worktreePath> rev-parse --abbrev-ref HEAD\` equals <default>, STOP: return worktreePath=null and error="<default> is checked out — review mode would commit fixes directly onto the default branch; check out the branch to review first". Do not create or switch branches yourself.
 
-Return {worktreePath, base, repoRoot}.`
+Return {worktreePath, base, repoRoot, error}.`
 }
 
 function retroDiscoverPrompt() {
@@ -1781,7 +1787,9 @@ if (mode === 'review') {
   phase('Parse')
   const ctx = await agent(reviewCtxPrompt(), withTier({ schema: REVIEW_CTX_SCHEMA, label: 'resolve-ctx' }, TIER.review_ctx))
   if (!ctx || !ctx.worktreePath) {
-    log('Could not resolve the review worktree.')
+    // A null worktreePath is either a dead agent or a safety-gate refusal; the latter carries the
+    // reason in ctx.error (dirty tree, default branch checked out). Nothing has been touched yet.
+    log('Could not resolve the review worktree' + (ctx && ctx.error ? ': ' + ctx.error : '.'))
     return { error: 'unresolved worktree', mode, ctx }
   }
   const board = selectBoard(profileOverride || 'HIGH')

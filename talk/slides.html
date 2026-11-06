@@ -2021,7 +2021,7 @@ blockquote {
 <h2 id="safety-rules">Safety rules</h2>
 <ul>
 <li><strong>A person at both ends</strong> - you approve the plan going in, and it never opens the PR itself; it only reports whether the branch is worth one</li>
-<li><strong>Its own git worktree</strong> - your checkout is untouched <em>(unless you pass <code>noWorktree</code>)</em></li>
+<li><strong>Its own git worktree</strong> - your checkout is untouched <em>(unless you pass <code>noWorktree</code> - or use <code>review</code> mode, which commits onto the branch you give it)</em></li>
 <li><strong>A dead agent is a FAILED step, never a missing one</strong> - anything left unproven fails closed</li>
 <li><strong>Read-only roles</strong> - by instruction, <em>not</em> by a sandbox</li>
 <li><strong>Merged with the latest <code>main</code> first</strong> - build and tests then run on the merged tree, and a conflict fails the gate instead of landing on you</li>
@@ -3328,7 +3328,7 @@ blockquote {
 </code></pre>
 <ul>
 <li><code>mode:&quot;expand&quot;</code> - shows what it would do, changes nothing</li>
-<li><code>mode:&quot;review&quot;</code> - board + gates on any branch you already have</li>
+<li><code>mode:&quot;review&quot;</code> - board + gates on a branch you already have. <strong>It commits fixes onto it</strong>, so it wants a clean tree and refuses the default branch</li>
 <li><code>mode:&quot;retrospect&quot;</code> - mines past runs for rules, proposes only</li>
 </ul>
 <footer>Graph engineering · DevTech 2026</footer>

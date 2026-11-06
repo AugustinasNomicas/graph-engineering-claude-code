@@ -390,6 +390,11 @@ Workflow({ scriptPath: ".claude/workflows/implement-plan-with-dynamic-workflow.j
 Modes (`args: {mode: "..."}`): `delegate` (default, full run) · `expand` (dry run) · `review`
 (board + gates over an existing branch) · `retrospect` (below).
 
+`review` is **not read-only**: the board's fix waves and the QA gate commit onto the branch that
+is checked out, exactly as they would at the end of a delegate run. It therefore requires a clean
+working tree and refuses to run while the default branch is checked out — check out the branch
+you want reviewed first.
+
 `readyForPr` is true only when all phases completed, every phase's criteria were independently
 verified, the criteria were **re-verified over the final HEAD**, no CRITICAL/HIGH board fix was
 left unapplied, all gates are green, and the branch carries no gitignored paths.

@@ -1,6 +1,6 @@
 ---
 name: implement-plan-with-dynamic-workflow
-description: Autonomously implement an approved phase-based plan (the /create-plan format) as a background multi-agent workflow — a dedicated git worktree (or the current checkout in place with noWorktree), each phase implemented by a complexity-driven pass chain plus external reviewer/fixer rounds and independent criteria verification, then the canonical review board + Build/Test/QA gates over the diff. Use when the user wants to "run/execute this plan", "implement this plan autonomously", "turn this plan into a worktree and review it", run a plan "without a worktree" / "in place", or drive an approved plan end to end without supervision. This is the autonomous, multi-agent counterpart to the interactive /implement-plan command. Modes: delegate (default), expand (dry-run preview, mutates nothing), review (gate-only over an existing worktree), retrospect (mine human follow-up commits on past runs and propose convention/charter additions).
+description: Autonomously implement an approved phase-based plan (the /create-plan format) as a background multi-agent workflow — a dedicated git worktree (or the current checkout in place with noWorktree), each phase implemented by a complexity-driven pass chain plus external reviewer/fixer rounds and independent criteria verification, then the canonical review board + Build/Test/QA gates over the diff. Use when the user wants to "run/execute this plan", "implement this plan autonomously", "turn this plan into a worktree and review it", run a plan "without a worktree" / "in place", or drive an approved plan end to end without supervision. This is the autonomous, multi-agent counterpart to the interactive /implement-plan command. Modes: delegate (default), expand (dry-run preview, mutates nothing), review (board + gates over an existing branch; commits fixes onto it), retrospect (mine human follow-up commits on past runs and propose convention/charter additions).
 ---
 
 # implement-plan-with-dynamic-workflow
@@ -78,6 +78,9 @@ A run **fails fast** if `repo-profile.json` is missing or has no `build_verify_c
   branch's pre-existing commits too).
 - `base` — diff base branch (default: `origin/<default>`).
 - `worktreePath` — for `review` mode: the worktree/repo to review (default: current repo root).
+  Review mode is **not read-only**: the board's fix waves and the QA gate commit onto the branch
+  checked out there, so it requires a **clean working tree** and **refuses the default branch**
+  (hard stop before any agent touches the tree; the reason is returned in `ctx.error`).
 - `branches` — for `retrospect` mode: explicit `implement-plan/*` branches to analyze
   (default: auto-discover).
 
