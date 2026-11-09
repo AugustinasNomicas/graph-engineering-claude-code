@@ -560,7 +560,7 @@ One real ticket, one codebase, same day, no coordination between the two runs:
 | CI | `lint-markdown` red | all green |
 | **Weighted score, 9 dimensions** | **3.40 / 5** | **4.33 / 5** |
 
-Verdict: **merge B**, confidence high - and it merged on Aug 12.
+Verdict: **merge B**
 
 
 <!--
