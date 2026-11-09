@@ -890,19 +890,16 @@ That last one points straight at us. Our answer: **we do not parallelise the cod
 
 <!-- _class: lead -->
 
-# Your agent system is already a graph.
+# Graph engineering with Claude Code dynamic workflows
 
-## The only question is whether you drew it.
+![w:260](repo-qr.svg)
 
-**Draw yours before you write the next prompt.**
-
-`github.com/AugustinasNomicas/graph-engineering-claude-code`
+[github.com/AugustinasNomicas/graph-engineering-claude-code](https://github.com/AugustinasNomicas/graph-engineering-claude-code)
 
 
 <!--
-• The line is a deliberate CALLBACK — it opened the graph-engineering slide near the start, and the
-  room has now seen the whole thing, so it lands differently the second time
-• Second line is the ask: it is the one thing a listener can do tonight, and it costs them nothing
+• Closing slide: the title and the repo link, nothing else to read, so the link stays on screen
+  through Q&A and the hallway questions below
 • Conference slot: check whether Q&A is inside the 30 minutes or after. If inside, stop here with
   time left; if not, say the line and get off the stage
 
