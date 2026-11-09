@@ -365,7 +365,7 @@ blockquote {
 </table>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-footer="Table: Turing Post, &quot;Is Graph Engineering Real?&quot; (Ksenia Se, July 2026)" data-theme="default" data-style="section {
   font-size: 30px;
 }
 section.lead {
@@ -417,7 +417,7 @@ h2 {
 blockquote {
   font-size: 28px;
 }
-" lang="C" data-marpit-pagination="4" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--theme:default;--style:section {
+" lang="C" data-marpit-pagination="4" style="--paginate:true;--footer:Table: Turing Post, &quot;Is Graph Engineering Real?&quot; (Ksenia Se, July 2026);--theme:default;--style:section {
   font-size: 30px;
 }
 section.lead {
@@ -470,13 +470,45 @@ blockquote {
   font-size: 28px;
 }
 ;" data-marpit-pagination-total="29" data-size="16:9">
-<h2 id="graph-engineering">Graph engineering</h2>
-<p><strong>Your agent system is already a graph.</strong> The only question is whether you drew it.</p>
-<p>Cost and latency live in the <strong>topology</strong> - not in the model, and not in the wording.</p>
-<blockquote>
-<p>A prompter asks a question. <strong>An architect draws a graph.</strong></p>
-</blockquote>
-<footer>Graph engineering · DevTech 2026</footer>
+<h2 id="four-things-people-call-a-graph">Four things people call &quot;a graph&quot;</h2>
+<table>
+<thead>
+<tr>
+<th>Type of graph</th>
+<th>What it describes</th>
+<th>Used for</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Control graph</strong></td>
+<td><strong>What runs next, and under which conditions</strong></td>
+<td><strong>Orchestrating agent workflows</strong></td>
+<td>LangGraph, ADK - <strong>and this talk</strong></td>
+</tr>
+<tr>
+<td>Knowledge graph</td>
+<td>Entities and relationships inside data</td>
+<td>Retrieval and reasoning over documents</td>
+<td>Microsoft GraphRAG</td>
+</tr>
+<tr>
+<td>Execution trace</td>
+<td>What happened during one run</td>
+<td>Debugging and observability</td>
+<td>Agent traces</td>
+</tr>
+<tr>
+<td>Improvement graph</td>
+<td>Loops that optimize, check and audit one another</td>
+<td>Controlling self-improving systems</td>
+<td>Optimizer, counter-metric and audit loops</td>
+</tr>
+</tbody>
+</table>
+<p><strong>This talk is about the control graph only</strong> - which agents run, in what order, and what waits on what.</p>
+<footer>Table: Turing Post, &quot;Is Graph Engineering Real?&quot; (Ksenia Se, July 2026)</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
   font-size: 30px;
@@ -583,17 +615,12 @@ blockquote {
   font-size: 28px;
 }
 ;" data-marpit-pagination-total="29" data-size="16:9">
-<h2 id="nodes-and-edges-and-one-honest-test">Nodes and edges, and one honest test</h2>
-<p>A <strong>node</strong> is one bounded job: one agent, one input, one output.<br />
-Every node is a full agent - its own context, real tools, and it can change files.</p>
-<p>An <strong>edge</strong> is a dependency: this node's output <em>feeds</em> that node's input.<br />
-Order is not an edge. Being next to each other in your prompt is not an edge.</p>
+<h2 id="graph-engineering">Graph engineering</h2>
+<p><strong>Your agent system is already a graph.</strong> The only question is whether you drew it.</p>
+<p>Cost and latency live in the <strong>topology</strong> - not in the model, and not in the wording.</p>
 <blockquote>
-<p><strong>The test:</strong> for every &quot;and then&quot;, does the next step actually read<br />
-the last step's output? If nothing crosses, the wait buys nothing.</p>
+<p>A prompter asks a question. <strong>An architect draws a graph.</strong></p>
 </blockquote>
-<p>A straight line <strong>is</strong> a graph - the narrowest one, where every stall strands everything behind it.<br />
-The fix is not a longer chain. It is a wider graph.</p>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
@@ -701,17 +728,17 @@ blockquote {
   font-size: 28px;
 }
 ;" data-marpit-pagination-total="29" data-size="16:9">
-<h2 id="what-is-a-claude-code-dynamic-workflow">What is a Claude Code <em>dynamic workflow</em>?</h2>
-<p><strong>A <code>.js</code> file Claude Code runs in the background.</strong></p>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-js"><span class="hljs-keyword">const</span> result = <span class="hljs-keyword">await</span> <span class="hljs-title function_">agent</span>(<span class="hljs-string">&quot;prompt…&quot;</span>, { schema })   <span class="hljs-comment">// start one subagent</span>
-<span class="hljs-keyword">await</span> <span class="hljs-title function_">parallel</span>([...thunks])                          <span class="hljs-comment">// run many in parallel</span>
-</code></pre>
-<ul>
-<li>Every <code>agent()</code> is a <strong>full coding agent</strong> with a clean, empty context</li>
-<li>The order of steps is <strong>normal code</strong>, not prompting</li>
-<li>It writes a log, tells you when it is done, and <strong>can be resumed</strong></li>
-</ul>
-<p><strong>Two ways to get one:</strong> say <code>ultracode</code> and Claude draws the graph for <em>this</em> task and runs it - or commit the <code>.js</code> up front, and get the same graph every time, reviewed in PRs.</p>
+<h2 id="nodes-and-edges-and-one-honest-test">Nodes and edges, and one honest test</h2>
+<p>A <strong>node</strong> is one bounded job: one agent, one input, one output.<br />
+Every node is a full agent - its own context, real tools, and it can change files.</p>
+<p>An <strong>edge</strong> is a dependency: this node's output <em>feeds</em> that node's input.<br />
+Order is not an edge. Being next to each other in your prompt is not an edge.</p>
+<blockquote>
+<p><strong>The test:</strong> for every &quot;and then&quot;, does the next step actually read<br />
+the last step's output? If nothing crosses, the wait buys nothing.</p>
+</blockquote>
+<p>A straight line <strong>is</strong> a graph - the narrowest one, where every stall strands everything behind it.<br />
+The fix is not a longer chain. It is a wider graph.</p>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
@@ -819,53 +846,20 @@ blockquote {
   font-size: 28px;
 }
 ;" data-marpit-pagination-total="29" data-size="16:9">
-<h2 id="compared-to-a-chat-and-a-crew">Compared to a chat and a crew</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>One long chat</th>
-<th>An agent &quot;crew&quot;</th>
-<th>A written graph</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Who picks the next step</td>
-<td>the model</td>
-<td>the conversation</td>
-<td><strong>the script</strong></td>
-</tr>
-<tr>
-<td>Context</td>
-<td>one, holds everything</td>
-<td>shared, drifts</td>
-<td><strong>one clean one per node</strong></td>
-</tr>
-<tr>
-<td>Handover</td>
-<td>whatever it writes</td>
-<td>free text</td>
-<td><strong>JSON + git commits</strong></td>
-</tr>
-<tr>
-<td>Same run twice?</td>
-<td>no</td>
-<td>no</td>
-<td><strong>same shape every time</strong></td>
-</tr>
-<tr>
-<td>To debug it you</td>
-<td>re-read the thread</td>
-<td>read a group chat</td>
-<td><strong>read a log</strong></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Our agents never meet</strong> - they share work through files and commits, and the script is the only thing that coordinates them.</p>
+<h2 id="what-is-a-claude-code-dynamic-workflow">What is a Claude Code <em>dynamic workflow</em>?</h2>
+<p><strong>A <code>.js</code> file Claude Code runs in the background.</strong></p>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-js"><span class="hljs-keyword">const</span> result = <span class="hljs-keyword">await</span> <span class="hljs-title function_">agent</span>(<span class="hljs-string">&quot;prompt…&quot;</span>, { schema })   <span class="hljs-comment">// start one subagent</span>
+<span class="hljs-keyword">await</span> <span class="hljs-title function_">parallel</span>([...thunks])                          <span class="hljs-comment">// run many in parallel</span>
+</code></pre>
+<ul>
+<li>Every <code>agent()</code> is a <strong>full coding agent</strong> with a clean, empty context</li>
+<li>The order of steps is <strong>normal code</strong>, not prompting</li>
+<li>It writes a log, tells you when it is done, and <strong>can be resumed</strong></li>
+</ul>
+<p><strong>Two ways to get one:</strong> say <code>ultracode</code> and Claude draws the graph for <em>this</em> task and runs it - or commit the <code>.js</code> up front, and get the same graph every time, reviewed in PRs.</p>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-class="statement" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
   font-size: 30px;
 }
 section.lead {
@@ -917,7 +911,158 @@ h2 {
 blockquote {
   font-size: 28px;
 }
-" lang="C" class="statement" data-marpit-pagination="8" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--class:statement;--theme:default;--style:section {
+" lang="C" data-marpit-pagination="8" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--theme:default;--style:section {
+  font-size: 30px;
+}
+section.lead {
+  text-align: center;
+}
+section.lead footer, section.lead::after {
+  display: none;
+}
+section.lead p {
+  font-size: 24px;
+  opacity: 0.75;
+}
+section.statement {
+  justify-content: center;
+  text-align: center;
+}
+section.statement p {
+  font-size: 40px;
+  line-height: 1.6;
+}
+table {
+  font-size: 24px;
+}
+pre {
+  font-size: 19px;
+  line-height: 1.3;
+}
+section.diagram pre {
+  font-size: 16px;
+}
+section.lenses table {
+  font-size: 17px;
+}
+section.lenses li, section.lenses p {
+  font-size: 21px;
+}
+section.roster table {
+  font-size: 15px;
+}
+section.roster th, section.roster td {
+  padding: 3px 10px;
+}
+h1 {
+  font-size: 44px;
+}
+h2 {
+  font-size: 36px;
+}
+blockquote {
+  font-size: 28px;
+}
+;" data-marpit-pagination-total="29" data-size="16:9">
+<h2 id="compared-to-a-chat-and-a-crew">Compared to a chat and a crew</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>One long chat</th>
+<th>An agent &quot;crew&quot;</th>
+<th>A written graph</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Who picks the next step</td>
+<td>the model</td>
+<td>the conversation</td>
+<td><strong>the script</strong></td>
+</tr>
+<tr>
+<td>Context</td>
+<td>one, holds everything</td>
+<td>shared, drifts</td>
+<td><strong>one clean one per node</strong></td>
+</tr>
+<tr>
+<td>Handover</td>
+<td>whatever it writes</td>
+<td>free text</td>
+<td><strong>JSON + git commits</strong></td>
+</tr>
+<tr>
+<td>Same run twice?</td>
+<td>no</td>
+<td>no</td>
+<td><strong>same shape every time</strong></td>
+</tr>
+<tr>
+<td>To debug it you</td>
+<td>re-read the thread</td>
+<td>read a group chat</td>
+<td><strong>read a log</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Our agents never meet</strong> - they share work through files and commits, and the script is the only thing that coordinates them.</p>
+<footer>Graph engineering · DevTech 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-class="statement" data-theme="default" data-style="section {
+  font-size: 30px;
+}
+section.lead {
+  text-align: center;
+}
+section.lead footer, section.lead::after {
+  display: none;
+}
+section.lead p {
+  font-size: 24px;
+  opacity: 0.75;
+}
+section.statement {
+  justify-content: center;
+  text-align: center;
+}
+section.statement p {
+  font-size: 40px;
+  line-height: 1.6;
+}
+table {
+  font-size: 24px;
+}
+pre {
+  font-size: 19px;
+  line-height: 1.3;
+}
+section.diagram pre {
+  font-size: 16px;
+}
+section.lenses table {
+  font-size: 17px;
+}
+section.lenses li, section.lenses p {
+  font-size: 21px;
+}
+section.roster table {
+  font-size: 15px;
+}
+section.roster th, section.roster td {
+  padding: 3px 10px;
+}
+h1 {
+  font-size: 44px;
+}
+h2 {
+  font-size: 36px;
+}
+blockquote {
+  font-size: 28px;
+}
+" lang="C" class="statement" data-marpit-pagination="9" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--class:statement;--theme:default;--style:section {
   font-size: 30px;
 }
 section.lead {
@@ -973,7 +1118,7 @@ blockquote {
 <p>ok ok, show me The Graph already</p>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-class="diagram" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-class="diagram" data-theme="default" data-style="section {
   font-size: 30px;
 }
 section.lead {
@@ -1025,7 +1170,7 @@ h2 {
 blockquote {
   font-size: 28px;
 }
-" lang="C" class="diagram" data-marpit-pagination="9" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--class:diagram;--theme:default;--style:section {
+" lang="C" class="diagram" data-marpit-pagination="10" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--class:diagram;--theme:default;--style:section {
   font-size: 30px;
 }
 section.lead {
@@ -1083,121 +1228,6 @@ blockquote {
 <p><strong>Sequential</strong> only where work builds on earlier work, <strong>parallel</strong> everywhere else.<br />
 <strong>Two diamonds</strong>: fan out for breadth → reduce → synthesize.<br />
 The only <strong>barriers</strong> are where a stage genuinely needs the whole set.</p>
-<footer>Graph engineering · DevTech 2026</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
-  font-size: 30px;
-}
-section.lead {
-  text-align: center;
-}
-section.lead footer, section.lead::after {
-  display: none;
-}
-section.lead p {
-  font-size: 24px;
-  opacity: 0.75;
-}
-section.statement {
-  justify-content: center;
-  text-align: center;
-}
-section.statement p {
-  font-size: 40px;
-  line-height: 1.6;
-}
-table {
-  font-size: 24px;
-}
-pre {
-  font-size: 19px;
-  line-height: 1.3;
-}
-section.diagram pre {
-  font-size: 16px;
-}
-section.lenses table {
-  font-size: 17px;
-}
-section.lenses li, section.lenses p {
-  font-size: 21px;
-}
-section.roster table {
-  font-size: 15px;
-}
-section.roster th, section.roster td {
-  padding: 3px 10px;
-}
-h1 {
-  font-size: 44px;
-}
-h2 {
-  font-size: 36px;
-}
-blockquote {
-  font-size: 28px;
-}
-" lang="C" data-marpit-pagination="10" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--theme:default;--style:section {
-  font-size: 30px;
-}
-section.lead {
-  text-align: center;
-}
-section.lead footer, section.lead::after {
-  display: none;
-}
-section.lead p {
-  font-size: 24px;
-  opacity: 0.75;
-}
-section.statement {
-  justify-content: center;
-  text-align: center;
-}
-section.statement p {
-  font-size: 40px;
-  line-height: 1.6;
-}
-table {
-  font-size: 24px;
-}
-pre {
-  font-size: 19px;
-  line-height: 1.3;
-}
-section.diagram pre {
-  font-size: 16px;
-}
-section.lenses table {
-  font-size: 17px;
-}
-section.lenses li, section.lenses p {
-  font-size: 21px;
-}
-section.roster table {
-  font-size: 15px;
-}
-section.roster th, section.roster td {
-  padding: 3px 10px;
-}
-h1 {
-  font-size: 44px;
-}
-h2 {
-  font-size: 36px;
-}
-blockquote {
-  font-size: 28px;
-}
-;" data-marpit-pagination-total="29" data-size="16:9">
-<h2 id="what-goes-in-an-approved-plan-create-plan">What goes in: an approved plan (<code>/create-plan</code>)</h2>
-<p><strong>A dynamic workflow needs a spec.</strong> Ours is a plan, and writing it also uses agents:</p>
-<ol>
-<li><strong>Research first</strong> - agents read the code in parallel, <em>then</em> ask you questions</li>
-<li><strong>Write it together</strong> - you approve the shape before the details</li>
-<li><strong>Three fresh reviewers</strong>: Tactical → Architectural → Critic</li>
-<li>Result: a plan file split into phases - <strong>the only input the workflow needs</strong></li>
-</ol>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
@@ -1305,31 +1335,14 @@ blockquote {
   font-size: 28px;
 }
 ;" data-marpit-pagination-total="29" data-size="16:9">
-<h2 id="the-nodes-that-write-the-code">The nodes that write the code</h2>
-<p>Each phase runs a <strong>pass chain</strong>, and the chain grows with the phase's <code>**Complexity**</code> tag:</p>
-<table>
-<thead>
-<tr>
-<th>Pass</th>
-<th>What it does</th>
-<th>Runs on</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>initial</code></td>
-<td>Build what the phase spec asks for</td>
-<td>every phase</td>
-</tr>
-<tr>
-<td><code>edge_cases</code></td>
-<td>A second pass over the same work: empty input, boundaries, concurrency, work that stops half way, cleanup</td>
-<td><code>MEDIUM</code> and <code>HIGH</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Sequential on purpose</strong> - <code>edge_cases</code> reads the diff <code>initial</code> just committed.<br />
-Every pass commits, so a stopped run resumes instead of restarting.</p>
+<h2 id="what-goes-in-an-approved-plan-create-plan">What goes in: an approved plan (<code>/create-plan</code>)</h2>
+<p><strong>A dynamic workflow needs a spec.</strong> Ours is a plan, and writing it also uses agents:</p>
+<ol>
+<li><strong>Research first</strong> - agents read the code in parallel, <em>then</em> ask you questions</li>
+<li><strong>Write it together</strong> - you approve the shape before the details</li>
+<li><strong>Three fresh reviewers</strong>: Tactical → Architectural → Critic</li>
+<li>Result: a plan file split into phases - <strong>the only input the workflow needs</strong></li>
+</ol>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
@@ -1437,17 +1450,31 @@ blockquote {
   font-size: 28px;
 }
 ;" data-marpit-pagination-total="29" data-size="16:9">
-<h2 id="reviewed-by-someone-else-not-by-itself">Reviewed by someone else, not by itself</h2>
-<ul>
-<li><strong>The reviewer did not write the code</strong> - it is told to review a <em>colleague's PR</em></li>
-<li><strong>Reviewers run together, then one fixer settles them</strong> - it is told they never met</li>
-<li><strong>A fixer starts only if something was found</strong> - a clean review costs nothing</li>
-<li><strong>criteria-verify</strong> runs every Automated check as written, then ticks the boxes</li>
-</ul>
-<blockquote>
-<p>The agent that writes the code never marks its own work as done.</p>
-</blockquote>
-<p>This is <strong>adversarial verification</strong> - the fix for a model preferring its own output when asked to judge it.</p>
+<h2 id="the-nodes-that-write-the-code">The nodes that write the code</h2>
+<p>Each phase runs a <strong>pass chain</strong>, and the chain grows with the phase's <code>**Complexity**</code> tag:</p>
+<table>
+<thead>
+<tr>
+<th>Pass</th>
+<th>What it does</th>
+<th>Runs on</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>initial</code></td>
+<td>Build what the phase spec asks for</td>
+<td>every phase</td>
+</tr>
+<tr>
+<td><code>edge_cases</code></td>
+<td>A second pass over the same work: empty input, boundaries, concurrency, work that stops half way, cleanup</td>
+<td><code>MEDIUM</code> and <code>HIGH</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Sequential on purpose</strong> - <code>edge_cases</code> reads the diff <code>initial</code> just committed.<br />
+Every pass commits, so a stopped run resumes instead of restarting.</p>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
@@ -1555,17 +1582,20 @@ blockquote {
   font-size: 28px;
 }
 ;" data-marpit-pagination-total="29" data-size="16:9">
-<h2 id="the-review-board-every-reviewer-in-parallel">The review board: every reviewer in parallel</h2>
-<p>All the changes go to <strong>one specialist reviewer per job description, all in parallel</strong>:</p>
+<h2 id="reviewed-by-someone-else-not-by-itself">Reviewed by someone else, not by itself</h2>
 <ul>
-<li><strong>10 general reviewers</strong> - correctness, security, tests, performance…</li>
-<li><strong>1 local-problems reviewer</strong> - the mistakes <em>this repo has already paid for</em></li>
-<li><strong><code>plan-conformance</code></strong> - the only one that reads the <em>plan</em></li>
+<li><strong>The reviewer did not write the code</strong> - it is told to review a <em>colleague's PR</em></li>
+<li><strong>Reviewers run together, then one fixer settles them</strong> - it is told they never met</li>
+<li><strong>A fixer starts only if something was found</strong> - a clean review costs nothing</li>
+<li><strong>criteria-verify</strong> runs every Automated check as written, then ticks the boxes</li>
 </ul>
-<p><strong>Fan out, then synthesize</strong>: 12 reviews take <strong>as long as one review</strong>.</p>
+<blockquote>
+<p>The agent that writes the code never marks its own work as done.</p>
+</blockquote>
+<p>This is <strong>adversarial verification</strong> - the fix for a model preferring its own output when asked to judge it.</p>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-class="lenses roster" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
   font-size: 30px;
 }
 section.lead {
@@ -1617,7 +1647,122 @@ h2 {
 blockquote {
   font-size: 28px;
 }
-" lang="C" class="lenses roster" data-marpit-pagination="14" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--class:lenses roster;--theme:default;--style:section {
+" lang="C" data-marpit-pagination="14" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--theme:default;--style:section {
+  font-size: 30px;
+}
+section.lead {
+  text-align: center;
+}
+section.lead footer, section.lead::after {
+  display: none;
+}
+section.lead p {
+  font-size: 24px;
+  opacity: 0.75;
+}
+section.statement {
+  justify-content: center;
+  text-align: center;
+}
+section.statement p {
+  font-size: 40px;
+  line-height: 1.6;
+}
+table {
+  font-size: 24px;
+}
+pre {
+  font-size: 19px;
+  line-height: 1.3;
+}
+section.diagram pre {
+  font-size: 16px;
+}
+section.lenses table {
+  font-size: 17px;
+}
+section.lenses li, section.lenses p {
+  font-size: 21px;
+}
+section.roster table {
+  font-size: 15px;
+}
+section.roster th, section.roster td {
+  padding: 3px 10px;
+}
+h1 {
+  font-size: 44px;
+}
+h2 {
+  font-size: 36px;
+}
+blockquote {
+  font-size: 28px;
+}
+;" data-marpit-pagination-total="29" data-size="16:9">
+<h2 id="the-review-board-every-reviewer-in-parallel">The review board: every reviewer in parallel</h2>
+<p>All the changes go to <strong>one specialist reviewer per job description, all in parallel</strong>:</p>
+<ul>
+<li><strong>10 general reviewers</strong> - correctness, security, tests, performance…</li>
+<li><strong>1 local-problems reviewer</strong> - the mistakes <em>this repo has already paid for</em></li>
+<li><strong><code>plan-conformance</code></strong> - the only one that reads the <em>plan</em></li>
+</ul>
+<p><strong>Fan out, then synthesize</strong>: 12 reviews take <strong>as long as one review</strong>.</p>
+<footer>Graph engineering · DevTech 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-class="lenses roster" data-theme="default" data-style="section {
+  font-size: 30px;
+}
+section.lead {
+  text-align: center;
+}
+section.lead footer, section.lead::after {
+  display: none;
+}
+section.lead p {
+  font-size: 24px;
+  opacity: 0.75;
+}
+section.statement {
+  justify-content: center;
+  text-align: center;
+}
+section.statement p {
+  font-size: 40px;
+  line-height: 1.6;
+}
+table {
+  font-size: 24px;
+}
+pre {
+  font-size: 19px;
+  line-height: 1.3;
+}
+section.diagram pre {
+  font-size: 16px;
+}
+section.lenses table {
+  font-size: 17px;
+}
+section.lenses li, section.lenses p {
+  font-size: 21px;
+}
+section.roster table {
+  font-size: 15px;
+}
+section.roster th, section.roster td {
+  padding: 3px 10px;
+}
+h1 {
+  font-size: 44px;
+}
+h2 {
+  font-size: 36px;
+}
+blockquote {
+  font-size: 28px;
+}
+" lang="C" class="lenses roster" data-marpit-pagination="15" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--class:lenses roster;--theme:default;--style:section {
   font-size: 30px;
 }
 section.lead {
@@ -1744,7 +1889,7 @@ blockquote {
 </table>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-class="lenses" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-class="lenses" data-theme="default" data-style="section {
   font-size: 30px;
 }
 section.lead {
@@ -1796,7 +1941,7 @@ h2 {
 blockquote {
   font-size: 28px;
 }
-" lang="C" class="lenses" data-marpit-pagination="15" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--class:lenses;--theme:default;--style:section {
+" lang="C" class="lenses" data-marpit-pagination="16" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--class:lenses;--theme:default;--style:section {
   font-size: 30px;
 }
 section.lead {
@@ -1908,121 +2053,6 @@ blockquote {
 </table>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
-  font-size: 30px;
-}
-section.lead {
-  text-align: center;
-}
-section.lead footer, section.lead::after {
-  display: none;
-}
-section.lead p {
-  font-size: 24px;
-  opacity: 0.75;
-}
-section.statement {
-  justify-content: center;
-  text-align: center;
-}
-section.statement p {
-  font-size: 40px;
-  line-height: 1.6;
-}
-table {
-  font-size: 24px;
-}
-pre {
-  font-size: 19px;
-  line-height: 1.3;
-}
-section.diagram pre {
-  font-size: 16px;
-}
-section.lenses table {
-  font-size: 17px;
-}
-section.lenses li, section.lenses p {
-  font-size: 21px;
-}
-section.roster table {
-  font-size: 15px;
-}
-section.roster th, section.roster td {
-  padding: 3px 10px;
-}
-h1 {
-  font-size: 44px;
-}
-h2 {
-  font-size: 36px;
-}
-blockquote {
-  font-size: 28px;
-}
-" lang="C" data-marpit-pagination="16" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--theme:default;--style:section {
-  font-size: 30px;
-}
-section.lead {
-  text-align: center;
-}
-section.lead footer, section.lead::after {
-  display: none;
-}
-section.lead p {
-  font-size: 24px;
-  opacity: 0.75;
-}
-section.statement {
-  justify-content: center;
-  text-align: center;
-}
-section.statement p {
-  font-size: 40px;
-  line-height: 1.6;
-}
-table {
-  font-size: 24px;
-}
-pre {
-  font-size: 19px;
-  line-height: 1.3;
-}
-section.diagram pre {
-  font-size: 16px;
-}
-section.lenses table {
-  font-size: 17px;
-}
-section.lenses li, section.lenses p {
-  font-size: 21px;
-}
-section.roster table {
-  font-size: 15px;
-}
-section.roster th, section.roster td {
-  padding: 3px 10px;
-}
-h1 {
-  font-size: 44px;
-}
-h2 {
-  font-size: 36px;
-}
-blockquote {
-  font-size: 28px;
-}
-;" data-marpit-pagination-total="29" data-size="16:9">
-<h2 id="safety-rules">Safety rules</h2>
-<ul>
-<li><strong>A person at both ends</strong> - you approve the plan going in, and it never opens the PR itself; it only reports whether the branch is worth one</li>
-<li><strong>Its own git worktree</strong> - your checkout is untouched <em>(unless you pass <code>noWorktree</code> - or use <code>review</code> mode, which commits onto the branch you give it)</em></li>
-<li><strong>A dead agent is a FAILED step, never a missing one</strong> - anything left unproven fails closed</li>
-<li><strong>Read-only roles</strong> - by instruction, <em>not</em> by a sandbox</li>
-<li><strong>Merged with the latest <code>main</code> first</strong> - build and tests then run on the merged tree, and a conflict fails the gate instead of landing on you</li>
-</ul>
-<footer>Graph engineering · DevTech 2026</footer>
-</section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
   font-size: 30px;
 }
@@ -2128,48 +2158,17 @@ blockquote {
   font-size: 28px;
 }
 ;" data-marpit-pagination-total="29" data-size="16:9">
-<h2 id="ab-test-one-agent-vs-a-graph">A/B test: one agent vs a graph</h2>
-<p>One real ticket, one codebase, same day, no coordination between the two runs:</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>A</strong> - one agent, <code>/goal</code></th>
-<th><strong>B</strong> - this workflow</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Commits</td>
-<td>1 squashed</td>
-<td>30 phased</td>
-</tr>
-<tr>
-<td>Diff</td>
-<td>+1,470, 24 files</td>
-<td>+4,307, 38 files</td>
-</tr>
-<tr>
-<td>Put the original bug back</td>
-<td><strong>6</strong> tests fail</td>
-<td><strong>26</strong> tests fail</td>
-</tr>
-<tr>
-<td>CI</td>
-<td><code>lint-markdown</code> red</td>
-<td>all green</td>
-</tr>
-<tr>
-<td><strong>Weighted score, 9 dimensions</strong></td>
-<td><strong>3.40 / 5</strong></td>
-<td><strong>4.33 / 5</strong></td>
-</tr>
-</tbody>
-</table>
-<p>Verdict: <strong>merge B</strong>, confidence high - and it merged on Aug 12.</p>
+<h2 id="safety-rules">Safety rules</h2>
+<ul>
+<li><strong>A person at both ends</strong> - you approve the plan going in, and it never opens the PR itself; it only reports whether the branch is worth one</li>
+<li><strong>Its own git worktree</strong> - your checkout is untouched <em>(unless you pass <code>noWorktree</code> - or use <code>review</code> mode, which commits onto the branch you give it)</em></li>
+<li><strong>A dead agent is a FAILED step, never a missing one</strong> - anything left unproven fails closed</li>
+<li><strong>Read-only roles</strong> - by instruction, <em>not</em> by a sandbox</li>
+<li><strong>Merged with the latest <code>main</code> first</strong> - build and tests then run on the merged tree, and a conflict fails the gate instead of landing on you</li>
+</ul>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-class="lenses" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
   font-size: 30px;
 }
 section.lead {
@@ -2221,7 +2220,153 @@ h2 {
 blockquote {
   font-size: 28px;
 }
-" lang="C" class="lenses" data-marpit-pagination="18" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--class:lenses;--theme:default;--style:section {
+" lang="C" data-marpit-pagination="18" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--theme:default;--style:section {
+  font-size: 30px;
+}
+section.lead {
+  text-align: center;
+}
+section.lead footer, section.lead::after {
+  display: none;
+}
+section.lead p {
+  font-size: 24px;
+  opacity: 0.75;
+}
+section.statement {
+  justify-content: center;
+  text-align: center;
+}
+section.statement p {
+  font-size: 40px;
+  line-height: 1.6;
+}
+table {
+  font-size: 24px;
+}
+pre {
+  font-size: 19px;
+  line-height: 1.3;
+}
+section.diagram pre {
+  font-size: 16px;
+}
+section.lenses table {
+  font-size: 17px;
+}
+section.lenses li, section.lenses p {
+  font-size: 21px;
+}
+section.roster table {
+  font-size: 15px;
+}
+section.roster th, section.roster td {
+  padding: 3px 10px;
+}
+h1 {
+  font-size: 44px;
+}
+h2 {
+  font-size: 36px;
+}
+blockquote {
+  font-size: 28px;
+}
+;" data-marpit-pagination-total="29" data-size="16:9">
+<h2 id="ab-test-one-agent-vs-a-graph">A/B test: one agent vs a graph</h2>
+<p>One real ticket, one codebase, same day, no coordination between the two runs:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>A</strong> - one agent, <code>/goal</code></th>
+<th><strong>B</strong> - this workflow</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Commits</td>
+<td>1 squashed</td>
+<td>30 phased</td>
+</tr>
+<tr>
+<td>Diff</td>
+<td>+1,470, 24 files</td>
+<td>+4,307, 38 files</td>
+</tr>
+<tr>
+<td>Put the original bug back</td>
+<td><strong>6</strong> tests fail</td>
+<td><strong>26</strong> tests fail</td>
+</tr>
+<tr>
+<td>CI</td>
+<td><code>lint-markdown</code> red</td>
+<td>all green</td>
+</tr>
+<tr>
+<td><strong>Weighted score, 9 dimensions</strong></td>
+<td><strong>3.40 / 5</strong></td>
+<td><strong>4.33 / 5</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Verdict: <strong>merge B</strong>, confidence high - and it merged on Aug 12.</p>
+<footer>Graph engineering · DevTech 2026</footer>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-class="lenses" data-theme="default" data-style="section {
+  font-size: 30px;
+}
+section.lead {
+  text-align: center;
+}
+section.lead footer, section.lead::after {
+  display: none;
+}
+section.lead p {
+  font-size: 24px;
+  opacity: 0.75;
+}
+section.statement {
+  justify-content: center;
+  text-align: center;
+}
+section.statement p {
+  font-size: 40px;
+  line-height: 1.6;
+}
+table {
+  font-size: 24px;
+}
+pre {
+  font-size: 19px;
+  line-height: 1.3;
+}
+section.diagram pre {
+  font-size: 16px;
+}
+section.lenses table {
+  font-size: 17px;
+}
+section.lenses li, section.lenses p {
+  font-size: 21px;
+}
+section.roster table {
+  font-size: 15px;
+}
+section.roster th, section.roster td {
+  padding: 3px 10px;
+}
+h1 {
+  font-size: 44px;
+}
+h2 {
+  font-size: 36px;
+}
+blockquote {
+  font-size: 28px;
+}
+" lang="C" class="lenses" data-marpit-pagination="19" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--class:lenses;--theme:default;--style:section {
   font-size: 30px;
 }
 section.lead {
@@ -2361,151 +2506,6 @@ blockquote {
 <p>Sorted by weight. <strong>B wins five, ties three, loses one</strong> - at the joint-smallest weight.</p>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
-  font-size: 30px;
-}
-section.lead {
-  text-align: center;
-}
-section.lead footer, section.lead::after {
-  display: none;
-}
-section.lead p {
-  font-size: 24px;
-  opacity: 0.75;
-}
-section.statement {
-  justify-content: center;
-  text-align: center;
-}
-section.statement p {
-  font-size: 40px;
-  line-height: 1.6;
-}
-table {
-  font-size: 24px;
-}
-pre {
-  font-size: 19px;
-  line-height: 1.3;
-}
-section.diagram pre {
-  font-size: 16px;
-}
-section.lenses table {
-  font-size: 17px;
-}
-section.lenses li, section.lenses p {
-  font-size: 21px;
-}
-section.roster table {
-  font-size: 15px;
-}
-section.roster th, section.roster td {
-  padding: 3px 10px;
-}
-h1 {
-  font-size: 44px;
-}
-h2 {
-  font-size: 36px;
-}
-blockquote {
-  font-size: 28px;
-}
-" lang="C" data-marpit-pagination="19" style="--paginate:true;--footer:Graph engineering · DevTech 2026;--theme:default;--style:section {
-  font-size: 30px;
-}
-section.lead {
-  text-align: center;
-}
-section.lead footer, section.lead::after {
-  display: none;
-}
-section.lead p {
-  font-size: 24px;
-  opacity: 0.75;
-}
-section.statement {
-  justify-content: center;
-  text-align: center;
-}
-section.statement p {
-  font-size: 40px;
-  line-height: 1.6;
-}
-table {
-  font-size: 24px;
-}
-pre {
-  font-size: 19px;
-  line-height: 1.3;
-}
-section.diagram pre {
-  font-size: 16px;
-}
-section.lenses table {
-  font-size: 17px;
-}
-section.lenses li, section.lenses p {
-  font-size: 21px;
-}
-section.roster table {
-  font-size: 15px;
-}
-section.roster th, section.roster td {
-  padding: 3px 10px;
-}
-h1 {
-  font-size: 44px;
-}
-h2 {
-  font-size: 36px;
-}
-blockquote {
-  font-size: 28px;
-}
-;" data-marpit-pagination-total="29" data-size="16:9">
-<h2 id="what-each-arm-cost">What each arm cost</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>A</strong> - Fable 5.1, <code>/goal</code></th>
-<th><strong>B</strong> - Opus 5.5, this workflow</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Wall-clock</td>
-<td><strong>1h 15m</strong></td>
-<td><strong>3h 39m</strong></td>
-</tr>
-<tr>
-<td>Output tokens</td>
-<td><strong>445k</strong></td>
-<td><strong>780k</strong> run · <strong>1.60M</strong> with planning</td>
-</tr>
-<tr>
-<td>Context read</td>
-<td>63M</td>
-<td>180M</td>
-</tr>
-<tr>
-<td>Agents</td>
-<td><strong>1</strong></td>
-<td><strong>69</strong></td>
-</tr>
-<tr>
-<td>Assistant messages</td>
-<td>263</td>
-<td>2,104</td>
-</tr>
-</tbody>
-</table>
-<p>Same feature, one score higher: <strong>2.9x the wall-clock, 1.8x the tokens</strong> - 3.6x with planning.</p>
-<footer>Graph engineering · DevTech 2026</footer>
-</section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
   font-size: 30px;
 }
@@ -2611,13 +2611,44 @@ blockquote {
   font-size: 28px;
 }
 ;" data-marpit-pagination-total="29" data-size="16:9">
-<h2 id="what-the-ab-actually-shows">What the A/B actually shows</h2>
-<ul>
-<li><strong>Same design, different failure paths</strong> - both runs invented the same architecture. The whole score gap was in what happens when things go wrong</li>
-<li><strong>The graph wins where failure is expensive</strong> - 4.33 vs 3.40, and B is the one that merged - but it cost <strong>~3x the wall-clock</strong></li>
-<li><strong>More agents means more code to own</strong> - A won the one dimension B lost: maintainability, at a third of the diff</li>
-<li><strong>Directional, not proof</strong> - n = 1, and three variables moved at once: two different models, and only B got a written plan</li>
-</ul>
+<h2 id="what-each-arm-cost">What each arm cost</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>A</strong> - Fable, <code>/goal</code></th>
+<th><strong>B</strong> - Opus, this workflow</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wall-clock</td>
+<td><strong>1h 15m</strong></td>
+<td><strong>3h 39m</strong></td>
+</tr>
+<tr>
+<td>Output tokens</td>
+<td><strong>445k</strong></td>
+<td><strong>780k</strong> run · <strong>1.60M</strong> with planning</td>
+</tr>
+<tr>
+<td>Context read</td>
+<td>63M</td>
+<td>180M</td>
+</tr>
+<tr>
+<td>Agents</td>
+<td><strong>1</strong></td>
+<td><strong>69</strong></td>
+</tr>
+<tr>
+<td>Assistant messages</td>
+<td>263</td>
+<td>2,104</td>
+</tr>
+</tbody>
+</table>
+<p>Same feature, one score higher: <strong>2.9x the wall-clock, 1.8x the tokens</strong> - 3.6x with planning.</p>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
@@ -2725,14 +2756,13 @@ blockquote {
   font-size: 28px;
 }
 ;" data-marpit-pagination-total="29" data-size="16:9">
-<h2 id="learning-from-mistakes-retrospect-mode">Learning from mistakes: retrospect mode</h2>
-<p>Every fix a person made after a run is <strong>an example of what the pipeline missed</strong>.</p>
-<ol>
-<li><strong>Find</strong> - branches where people committed on top of the agents' work</li>
-<li><strong>Sort</strong> - group each change, and name the step that should have caught it</li>
-<li><strong>Propose</strong> - a ranked list: new rules, new reviewer jobs</li>
-</ol>
-<p><strong>It only proposes.</strong> A person approves every rule.</p>
+<h2 id="what-the-ab-actually-shows">What the A/B actually shows</h2>
+<ul>
+<li><strong>Same design, different failure paths</strong> - both runs invented the same architecture. The whole score gap was in what happens when things go wrong</li>
+<li><strong>The graph wins where failure is expensive</strong> - 4.33 vs 3.40, and B is the one that merged - but it cost <strong>~3x the wall-clock</strong></li>
+<li><strong>More agents means more code to own</strong> - A won the one dimension B lost: maintainability, at a third of the diff</li>
+<li><strong>Directional, not proof</strong> - n = 1, and three variables moved at once: two different models, and only B got a written plan</li>
+</ul>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
@@ -2840,12 +2870,14 @@ blockquote {
   font-size: 28px;
 }
 ;" data-marpit-pagination-total="29" data-size="16:9">
-<h2 id="results-so-far">Results so far</h2>
-<ul>
-<li><strong>76 runs on its own</strong> (Jun 11 – Nov 6) → merged production PRs</li>
-<li>Review board: <strong>313 fix commits</strong>, about <strong>6 per run</strong>, averaging +84 / −27 lines</li>
-<li>Rules and reviewer jobs <strong>fed back from what people fixed by hand</strong></li>
-</ul>
+<h2 id="learning-from-mistakes-retrospect-mode">Learning from mistakes: retrospect mode</h2>
+<p>Every fix a person made after a run is <strong>an example of what the pipeline missed</strong>.</p>
+<ol>
+<li><strong>Find</strong> - branches where people committed on top of the agents' work</li>
+<li><strong>Sort</strong> - group each change, and name the step that should have caught it</li>
+<li><strong>Propose</strong> - a ranked list: new rules, new reviewer jobs</li>
+</ol>
+<p><strong>It only proposes.</strong> A person approves every rule.</p>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
@@ -2953,11 +2985,11 @@ blockquote {
   font-size: 28px;
 }
 ;" data-marpit-pagination-total="29" data-size="16:9">
-<h2 id="where-graphs-quietly-break">Where graphs quietly break</h2>
+<h2 id="results-so-far">Results so far</h2>
 <ul>
-<li><strong>False edges</strong> - chained by typing order, not because data crosses</li>
-<li><strong>Barrier by default</strong> - a synchronised wait nothing downstream needs</li>
-<li><strong>Paying rent on plumbing</strong> - an agent doing what plain code could do</li>
+<li><strong>76 runs on its own</strong> (Jun 11 – Nov 6) → merged production PRs</li>
+<li>Review board: <strong>313 fix commits</strong>, about <strong>6 per run</strong>, averaging +84 / −27 lines</li>
+<li>Rules and reviewer jobs <strong>fed back from what people fixed by hand</strong></li>
 </ul>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
@@ -3066,29 +3098,12 @@ blockquote {
   font-size: 28px;
 }
 ;" data-marpit-pagination-total="29" data-size="16:9">
-<h2 id="what-the-shape-costs---and-what-fixing-it-bought">What the shape costs - and what fixing it bought</h2>
-<p>We profiled our own run by reading the commit timestamps:</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>share of wall-clock</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Two reviewers waiting on each other for nothing</td>
-<td><strong>37%</strong></td>
-</tr>
-<tr>
-<td>All the building and testing, put together</td>
-<td><strong>8%</strong></td>
-</tr>
-</tbody>
-</table>
-<p><strong>So we deleted that edge</strong> - those two reviewers now run together.<br />
-The shape cost ~4x what the compute did, and <strong>nothing about the prompts would have found it</strong>.</p>
-<p><strong>Profile your own</strong> - the commit trailers you already write are the profiler.</p>
+<h2 id="where-graphs-quietly-break">Where graphs quietly break</h2>
+<ul>
+<li><strong>False edges</strong> - chained by typing order, not because data crosses</li>
+<li><strong>Barrier by default</strong> - a synchronised wait nothing downstream needs</li>
+<li><strong>Paying rent on plumbing</strong> - an agent doing what plain code could do</li>
+</ul>
 <footer>Graph engineering · DevTech 2026</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-paginate="true" data-footer="Graph engineering · DevTech 2026" data-theme="default" data-style="section {
@@ -3694,7 +3709,22 @@ blockquote {
 • Only the bottom row needs a graph to reason about. The other four you can hold in your head for
   one agent — which is exactly why they stop working at dozens
 • If someone asks where the boundary is: harness and loop are about ONE agent's machinery, graph is
-  about the relationships BETWEEN agents. That is the jump, and it is the rest of this talk</p></div><div class="bespoke-marp-note" data-index="3" tabindex="0"><p>• Provenance and the joke were covered on the chain slide — do NOT re-tell them here. If someone
+  about the relationships BETWEEN agents. That is the jump, and it is the rest of this talk</p></div><div class="bespoke-marp-note" data-index="3" tabindex="0"><p>• One slide to disarm the word. &quot;Graph&quot; is doing four different jobs in the current conversation,
+  and if the room has one of the OTHER three in mind the rest of the deck reads as a category error
+• The table is transcribed from the Turing Post piece (FOD#159, Ksenia Se, 20 July 2026) — the same
+  article the chain slide's provenance note cites for &quot;Anthropic has named no such discipline&quot;.
+  Its own definition of the first row: &quot;the structure of the workflow and the rules governing what
+  runs next&quot;. That article, too, spends most of its graph-engineering discussion on control graphs
+• We are the first row, and nothing else: a dynamic workflow's .js file IS a control graph written
+  as ordinary code — the nodes are agents, the edges are awaits
+• The other three, in one line each, so nobody waits for them:
+  – knowledge graph: about the DATA, not the workflow. GraphRAG. Not this talk
+  – execution trace: what one run actually did. We touch it once, later — the Implplan commit
+    trailers are our execution trace, and the 37%-waiting figure in the review slide's notes was read straight off them
+  – improvement graph: loops that tune each other. retrospect mode is ONE such loop, but a
+    human-gated one that only proposes, so do not claim the row
+• If someone says LangGraph already does this: yes — same row, different trade-offs. The
+  &quot;Compared to a chat and a crew&quot; slide has the one-liner</p></div><div class="bespoke-marp-note" data-index="4" tabindex="0"><p>• Provenance and the joke were covered on the chain slide — do NOT re-tell them here. If someone
   challenges the term now, one sentence: community shorthand, useful lens, not a crowned discipline
 • What IS Anthropic's, and checkable if an advanced user goes looking:
   – their three NAMED patterns are Sequential, Parallel and Evaluator-optimizer workflows — not the six-name catalogue you may have seen repeated second-hand
@@ -3702,21 +3732,23 @@ blockquote {
   – &quot;synthesize&quot; and &quot;shapes&quot; are both their words. The docs literally say &quot;the prompts below show common shapes&quot;
   – &quot;barrier&quot; is their term too, but it lives in the workflow tool's own contract, NOT in the public docs. Do not send anyone to the docs for it
 • The falsifiable claim: on the runs we measured, the biggest wins came from changing WHEN work happens, not from rewording a prompt
-  – the numbers for that arrive later, on the cost slide
+  – the numbers, if asked: on one measured run 37% of the wall-clock was two phase reviewers waiting on
+    each other in series, against 8% for ALL build and test work. They no longer have a slide of their
+    own; they sit in the notes of the &quot;Reviewed by someone else&quot; slide
 • Two reasons to widen a graph, and the second is Anthropic's and less obvious than latency:
   – latency — nothing downstream reads the output, so the wait buys nothing
   – RECOVERY — &quot;a workflow that fans work out across many small agents preserves more progress than one long agent&quot;, because a stopped run replays from the first agent that did not finish
 • Do not oversell it. This is not a new science — it is a name for a habit good distributed-systems people already have
 • If someone says &quot;this is just a DAG&quot;: yes, and that is the point
   – the novelty is that the nodes are whole agents, and people forget to draw it because prompting feels like the whole job
-• The next slide is the vocabulary you need to apply this. The pitfalls slide near the end is the checklist</p></div><div class="bespoke-marp-note" data-index="4" tabindex="0"><p>• Vocabulary is load-bearing, not decoration — the pitfalls slide needs it
+• The next slide is the vocabulary you need to apply this. The pitfalls slide near the end is the checklist</p></div><div class="bespoke-marp-note" data-index="5" tabindex="0"><p>• Vocabulary is load-bearing, not decoration — the pitfalls slide needs it
 • Credit was split on the previous slide; add only that node/edge framing is COMMUNITY framing too
   – &quot;adversarial verification&quot;, on the later &quot;Reviewed by someone else&quot; slide, is OUR label for what their docs describe as agents that &quot;adversarially review each other's findings before they're reported&quot;
   – so present it as a description, not as a name you can look up
 • The example that lands: &quot;summarize this file, then check tomorrow's weather&quot;
   – no edge between the halves. The weather step never reads the summary
   – two independent jobs, chained anyway, for a wait that buys nothing
-• Ask the room for one from their own code. Someone always has one</p></div><div class="bespoke-marp-note" data-index="5" tabindex="0"><p>• Each agent gets shell, git, file edits, test runners
+• Ask the room for one from their own code. Someone always has one</p></div><div class="bespoke-marp-note" data-index="6" tabindex="0"><p>• Each agent gets shell, git, file edits, test runners
 • Must answer in a fixed JSON shape
 • Loops / ifs / retries / scheduling = plain JavaScript
 • Runs in the background → notification + a log of what every agent returned
@@ -3728,23 +3760,23 @@ blockquote {
   – COMMITTED: the graph is a file in the repo — diffable, reviewable, testable, same every run
   – the pipeline in the rest of this deck is the committed kind. That is why its shape can be
     argued about in a PR at all
-• The keyword is `ultracode`, one word</p></div><div class="bespoke-marp-note" data-index="6" tabindex="0"><p>• &quot;Crew&quot; = AutoGen group chats, CrewAI role crews
+• The keyword is `ultracode`, one word</p></div><div class="bespoke-marp-note" data-index="7" tabindex="0"><p>• &quot;Crew&quot; = AutoGen group chats, CrewAI role crews
   – agents talk, the plan emerges from the conversation → you cannot repeat a run
 • Anthropic's one-liner: coordination happens OUTSIDE the conversation
 • The last column is the whole talk
 • If LangGraph / Temporal come up: same core idea, different trade-offs
   – no YAML dialect, no graph builder to learn
   – a step can run your tests or make a commit, not just emit text
-• Concede: Claude Code only. Does not port to other vendors</p></div><div class="bespoke-marp-note" data-index="7" tabindex="0"><p>• Audience voice, not yours — deliver it as the interruption they are already thinking, then go
+• Concede: Claude Code only. Does not port to other vendors</p></div><div class="bespoke-marp-note" data-index="8" tabindex="0"><p>• Audience voice, not yours — deliver it as the interruption they are already thinking, then go
   straight to the diagram. Do not explain the joke
 • It is a deliberate pacing break: five conceptual slides have just gone by, and naming the
   impatience buys you the attention back for the walkthrough
 • If the room laughs, wait for it to stop before you start the diagram — the flow slide needs
-  their full attention and it is the densest picture in the deck</p></div><div class="bespoke-marp-note" data-index="8" tabindex="0"><p>• Name the shapes as you walk it.
+  their full attention and it is the densest picture in the deck</p></div><div class="bespoke-marp-note" data-index="9" tabindex="0"><p>• Name the shapes as you walk it.
 • Each phase is a small diamond: reviewers fan out, one fixer merges.
 • The board is the big one: 12 reviewers fan out, merge-findings reduces, the checkers fan out again per group.
 • A barrier is a point where everything upstream must arrive before anything downstream starts — and we only have two, both of which earn it: merge-findings genuinely needs every reviewer's output to dedupe across them, and the fix waves need the full set to work out which files overlap.
-• The sync gate merges the base branch before build and tests, so the recorded results apply to the post-merge tree.</p></div><div class="bespoke-marp-note" data-index="9" tabindex="0"><p>• Research agents: codebase-locator, codebase-analyzer, codebase-pattern-finder
+• The sync gate merges the base branch before build and tests, so the recorded results apply to the post-merge tree.</p></div><div class="bespoke-marp-note" data-index="10" tabindex="0"><p>• Research agents: codebase-locator, codebase-analyzer, codebase-pattern-finder
 • It only asks you what research cannot answer
 • You approve the phase structure before anyone writes the details
 • Then up to 3 review passes, each a FRESH plan-reviewer so they share no blind spots. The names
@@ -3758,7 +3790,7 @@ blockquote {
   – highest phase MEDIUM → + Architectural
   – any phase HIGH → + Critic, so all three
 • Sequential on purpose: each pass's feedback is written into the plan file before the next one
-  launches, so reviewer 2 reads the improved plan rather than the original</p></div><div class="bespoke-marp-note" data-index="10" tabindex="0"><p>• Short slide. The point is that &quot;implement&quot; is not ONE node — it is a small chain per phase, and
+  launches, so reviewer 2 reads the improved plan rather than the original</p></div><div class="bespoke-marp-note" data-index="11" tabindex="0"><p>• Short slide. The point is that &quot;implement&quot; is not ONE node — it is a small chain per phase, and
   the chain length is decided by the plan, not by the agent
 • Both passes are full coding agents with a clean context. The second is NOT a reviewer: it writes
   code, it just hunts a fixed list instead of the spec
@@ -3769,7 +3801,7 @@ blockquote {
 • A real edge, so it is sequential: `edge_cases` takes THIS phase's diff since the pass before it
 • `testFirst: true` prepends a `spec_tests` pass that writes failing tests first. Still a trial
 • If asked why HIGH has no third pass: HIGH buys a second REVIEWER (hardening_review) instead of a
-  third writing pass. More eyes, not more drafts</p></div><div class="bespoke-marp-note" data-index="11" tabindex="0"><p>• Reviewers cannot change files
+  third writing pass. More eyes, not more drafts</p></div><div class="bespoke-marp-note" data-index="12" tabindex="0"><p>• Reviewers cannot change files
 • They return structured findings: severity · file and line · the fix · the command to prove it
 • criteria-verify is a separate cheap agent — records evidence, only agent that may tick boxes
 • The single fixer gets the UNION of both reviewers' findings
@@ -3778,12 +3810,12 @@ blockquote {
 • The trade-off, if asked: the hardening reviewer no longer sees the correctness fixes
   – a defect introduced BY a fix is caught by the board over the whole diff, not inside the phase
 • Why take it: serial reviewer rounds dominate wall-clock
-  – measured run: 37% of it, against 8% for all build and test work combined</p></div><div class="bespoke-marp-note" data-index="12" tabindex="0"><p>• Each reviewer is blind to the others
+  – measured run: 37% of it, against 8% for all build and test work combined</p></div><div class="bespoke-marp-note" data-index="13" tabindex="0"><p>• Each reviewer is blind to the others
 • Each has a short written job description in the repo: ## Covers / ## Does NOT Cover
   – narrow descriptions are what stop two reviewers reporting the same thing
 • Local-problem examples: wrong tenant id in log scopes · unclean id inputs · dependency-lifetime traps
   – every codebase should write its own
-• plan-conformance catches: missing work · quiet changes of direction · work nobody asked for · boxes ticked without proof</p></div><div class="bespoke-marp-note" data-index="13" tabindex="0"><p>• &quot;Protects sole coverage&quot; = coverage-critical's second job. It marks any test that is the ONLY
+• plan-conformance catches: missing work · quiet changes of direction · work nobody asked for · boxes ticked without proof</p></div><div class="bespoke-marp-note" data-index="14" tabindex="0"><p>• &quot;Protects sole coverage&quot; = coverage-critical's second job. It marks any test that is the ONLY
   one covering an edge case, error path, security behaviour or data-integrity check as PROTECTED
   – test-economy's job is deleting redundant tests, and its charter forbids touching a PROTECTED
     one — &quot;if you are unsure, preserve it&quot;. Synthesis honours that when the two disagree
@@ -3797,7 +3829,7 @@ blockquote {
   – needs the plan FILE in the worktree — it judges the diff against the plan, not a charter. No plan copy, no reviewer
   – naming an explicit `reviewers` list REPLACES the roster and silently drops it. Pin a list → add it back yourself
 • Five more exist, off by default. Ask via the `reviewers` argument:
-  – observability-diagnostics · data-migration-safety · contract-compatibility · rollout-recovery · concurrency-safety</p></div><div class="bespoke-marp-note" data-index="14" tabindex="0"><p>• Reference table — it now sits inline, so walk it only if the room wants the detail; safe to skip when short on time
+  – observability-diagnostics · data-migration-safety · contract-compatibility · rollout-recovery · concurrency-safety</p></div><div class="bespoke-marp-note" data-index="15" tabindex="0"><p>• Reference table — it now sits inline, so walk it only if the room wants the detail; safe to skip when short on time
 • Agent counts per phase: LOW 2, MEDIUM 5, HIGH 6
   – that range is why a 4-phase plan is ~30 sequential steps
 • Two rows worth pausing on if asked:
@@ -3810,7 +3842,7 @@ blockquote {
 • Detail if asked: the worktree step also installs deps and builds once
   – a fresh worktree has no generated sources, and the passes' fast build assumes they exist
 • &quot;Get graded&quot; = criteria-verify, a separate agent. Ticks boxes only when every check passed
-• The board reads the cumulative diff, not just the last phase</p></div><div class="bespoke-marp-note" data-index="15" tabindex="0"><p>• A person approves the plan going in and the PR coming out
+• The board reads the cumulative diff, not just the last phase</p></div><div class="bespoke-marp-note" data-index="16" tabindex="0"><p>• A person approves the plan going in and the PR coming out
   – everything in between runs in the background with nobody watching
 • readyForPr needs ALL of:
   – every phase done
@@ -3833,7 +3865,7 @@ blockquote {
 • Be honest on two things:
   – read-only is by INSTRUCTION. They are ordinary agents with full tools; nothing takes Edit away
   – the script decides everything it can compute from returned JSON, but cannot touch the filesystem — anything needing git goes to an agent
-• If a run dies: resume, never relaunch. Finished agents come back from cache instantly</p></div><div class="bespoke-marp-note" data-index="16" tabindex="0"><p>• The one evidence slide in the deck — give it time
+• If a run dies: resume, never relaunch. Finished agents come back from cache instantly</p></div><div class="bespoke-marp-note" data-index="17" tabindex="0"><p>• The one evidence slide in the deck — give it time
 • The ticket was real and nasty: the Lambda's FIRST destructive power
   – tombstone projection rows, publish delete events no consumer can be told to undo
   – on a pipeline where merging IS shipping
@@ -3856,7 +3888,7 @@ blockquote {
   – A is still open, still red on markdownlint. So this now compares a shipped PR with an unshipped one
 • Do NOT oversell the scoring: same reviewer, tool-assisted
   – the report anonymises the agents as A and B so the scores are about code
-  – I de-anonymise here because in this room the point is which PROCESS produced which PR</p></div><div class="bespoke-marp-note" data-index="17" tabindex="0"><p>• Rows sorted by WEIGHT, not by who won. Equal weights keep the report's order
+  – I de-anonymise here because in this room the point is which PROCESS produced which PR</p></div><div class="bespoke-marp-note" data-index="18" tabindex="0"><p>• Rows sorted by WEIGHT, not by who won. Equal weights keep the report's order
   – say so — the shape of the table is the argument, it must not look arranged
 • B wins the heaviest dimension and every operational one
 • The one row it loses is worth 5 of 100
@@ -3873,7 +3905,7 @@ blockquote {
   – B repeats the literal 45 in four places, while shipping an enumerator that could supply it
 • Hygiene ties at 3 for opposite reasons: A's red markdownlint vs B's 30 commits, 11 sharing one opaque subject
   – neither is good
-• Every cell traces to a file:line in section 4 of the report. Argue with those, not the totals</p></div><div class="bespoke-marp-note" data-index="18" tabindex="0"><p>• Read out of the Claude Code session transcripts. Not estimated
+• Every cell traces to a file:line in section 4 of the report. Argue with those, not the totals</p></div><div class="bespoke-marp-note" data-index="19" tabindex="0"><p>• Read out of the Claude Code session transcripts. Not estimated
 • Attribution is exact, not inferred:
   – A: session 16:26-17:41 Aug 10, its single commit at 17:36, PR opens 17:37
   – B: workflow 06:31-10:10 Aug 11, its 30 commits between 06:37 and 10:10
@@ -3886,7 +3918,7 @@ blockquote {
   – most of what this process costs is spent before any code is written
 • Context read = cache reads. 180M for B
   – that is what &quot;one clean context per node&quot; costs: 69 agents each re-reading what they need
-  – also why cost is not linear in agent count — those reads hit the prompt cache</p></div><div class="bespoke-marp-note" data-index="19" tabindex="0"><p>• Say all four out loud. Conclusions are more persuasive WITH their limits attached
+  – also why cost is not linear in agent count — those reads hit the prompt cache</p></div><div class="bespoke-marp-note" data-index="20" tabindex="0"><p>• Say all four out loud. Conclusions are more persuasive WITH their limits attached
 • 1 — the finding that generalises. Both runs converged on the architecture, so the gap was not
   design taste; it was entirely failure-path policy: bounding a destructive path, tie semantics,
   which copy you read before deleting
@@ -3901,13 +3933,13 @@ blockquote {
   – it shows the process produced the better PR. NOT which part did the work
   – answering that needs several tickets and a stripped-down arm. I have not run it
 • B was not blameless: it deviated from the ticket's wording on one value, with a documented
-  argument. That went to the ticket owner, was accepted, and B merged on Aug 12</p></div><div class="bespoke-marp-note" data-index="20" tabindex="0"><p>• Groups: missing test · logic fix · edge case · docs out of date · broke a convention
+  argument. That went to the ticket owner, was accepted, and B merged on Aug 12</p></div><div class="bespoke-marp-note" data-index="21" tabindex="0"><p>• Groups: missing test · logic fix · edge case · docs out of date · broke a convention
 • Analysis runs in parallel, one agent per branch
 • Proposals point at: the repo rules · the reviewer job descriptions · the list of known traps
 • Propose-only cuts both ways
   – a proposal nobody reads changes nothing
   – so the loop turns only as fast as a person works the list
-  – say that plainly if asked how well it works. It is the honest limit of the design</p></div><div class="bespoke-marp-note" data-index="21" tabindex="0"><p>• Scope: a run counts if its MERGED PR either came off an `implement-plan/*` branch OR carries the
+  – say that plainly if asked how well it works. It is the honest limit of the design</p></div><div class="bespoke-marp-note" data-index="22" tabindex="0"><p>• Scope: a run counts if its MERGED PR either came off an `implement-plan/*` branch OR carries the
   workflow's `Implplan:` commit trailers. Re-counted 6 Nov: 76 merged PRs, five months, one service
   – BOTH tests are needed: 21 runs predate the trailer (all on `implement-plan/*`), and another 21
     ran IN PLACE on a ticket branch (feature/…, plain ticket names), so they never got the prefix
@@ -3930,7 +3962,7 @@ blockquote {
 • Several guardrails came out of retrospect, not design
   – the clean-branch check · re-verifying criteria after fixes · the sync-first QA gate
 • This is the aggregate picture. Per-ticket evidence was the A/B earlier
-  – if asked &quot;does it actually help&quot;, point back rather than re-arguing it here</p></div><div class="bespoke-marp-note" data-index="22" tabindex="0"><p>• Slide is deliberately terse — expand each one as you go
+  – if asked &quot;does it actually help&quot;, point back rather than re-arguing it here</p></div><div class="bespoke-marp-note" data-index="23" tabindex="0"><p>• Slide is deliberately terse — expand each one as you go
 • False edge: &quot;summarize this file, then check tomorrow's weather&quot; — second half never reads the first
 • Barrier: the latency is real, measurable time. &quot;The code is cleaner this way&quot; does not pay for it
 • Plumbing: an agent spun up to flatten a list or dedupe an array
@@ -3942,19 +3974,7 @@ blockquote {
   – reviewers in series is the second kind. The later one genuinely sees the earlier fixer's commits
   – the question is whether that is worth 20-30 min per round, not whether the dependency exists
 • Where we stand: the board waiting for every phase is a barrier that has not earned its wait
-• We avoided the plumbing one on purpose — ordering fix waves is a few lines of JavaScript</p></div><div class="bespoke-marp-note" data-index="23" tabindex="0"><p>• This is the slide the abstract promises, so land it: the expensive mistake is topological, not
-  verbal — and this is also the feedback loop working, not a to-do item
-• How it was measured, if asked: every workflow commit carries an `Implplan: P&lt;n&gt;/&lt;pass&gt;` trailer,
-  added for retrospect DISCOVERY. Their timestamps turned out to profile the run for free
-• 37% was two per-phase reviewers running in series where nothing crossed between them — a false
-  edge, exactly the first item on the previous slide. They now fan out in one `parallel()` call
-• 8% for all build and test work is the counter-intuitive half: the part everyone tries to
-  optimise was almost free next to the waiting
-• DO NOT claim we cut 37% off the run — parallelising a serial pair returns the SHORTER of the two,
-  so the ceiling is roughly half of it, and we have not re-measured a like-for-like run.
-  The measured claim is the 37% wait; the fix is that the wait is gone
-• The honest limit: n = 1, our repo, our phases. The claim is that the shape is worth MEASURING,
-  not that yours is 4x</p></div><div class="bespoke-marp-note" data-index="24" tabindex="0"><p>• The repo is PUBLIC: the workflow, 17 reviewer charters, two commands, five agents, the installer,
+• We avoided the plumbing one on purpose — ordering fix waves is a few lines of JavaScript</p></div><div class="bespoke-marp-note" data-index="24" tabindex="0"><p>• The repo is PUBLIC: the workflow, 17 reviewer charters, two commands, five agents, the installer,
   and these slides. Linux/macOS/WSL via install.sh, Windows via install.ps1
 • install.sh refuses a target that is not a git repo (the workflow makes worktrees off it), and it
   never overwrites — existing files are reported and skipped, so re-running after an update shows

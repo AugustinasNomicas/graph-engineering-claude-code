@@ -121,6 +121,40 @@ graph engineering
 -->
 ---
 
+<!-- _footer: 'Table: Turing Post, "Is Graph Engineering Real?" (Ksenia Se, July 2026)' -->
+
+## Four things people call "a graph"
+
+| Type of graph | What it describes | Used for | Example |
+|---|---|---|---|
+| **Control graph** | **What runs next, and under which conditions** | **Orchestrating agent workflows** | LangGraph, ADK - **and this talk** |
+| Knowledge graph | Entities and relationships inside data | Retrieval and reasoning over documents | Microsoft GraphRAG |
+| Execution trace | What happened during one run | Debugging and observability | Agent traces |
+| Improvement graph | Loops that optimize, check and audit one another | Controlling self-improving systems | Optimizer, counter-metric and audit loops |
+
+**This talk is about the control graph only** - which agents run, in what order, and what waits on what.
+
+
+<!--
+• One slide to disarm the word. "Graph" is doing four different jobs in the current conversation,
+  and if the room has one of the OTHER three in mind the rest of the deck reads as a category error
+• The table is transcribed from the Turing Post piece (FOD#159, Ksenia Se, 20 July 2026) — the same
+  article the chain slide's provenance note cites for "Anthropic has named no such discipline".
+  Its own definition of the first row: "the structure of the workflow and the rules governing what
+  runs next". That article, too, spends most of its graph-engineering discussion on control graphs
+• We are the first row, and nothing else: a dynamic workflow's .js file IS a control graph written
+  as ordinary code — the nodes are agents, the edges are awaits
+• The other three, in one line each, so nobody waits for them:
+  – knowledge graph: about the DATA, not the workflow. GraphRAG. Not this talk
+  – execution trace: what one run actually did. We touch it once, later — the Implplan commit
+    trailers are our execution trace, and the 37%-waiting figure in the review slide's notes was read straight off them
+  – improvement graph: loops that tune each other. retrospect mode is ONE such loop, but a
+    human-gated one that only proposes, so do not claim the row
+• If someone says LangGraph already does this: yes — same row, different trade-offs. The
+  "Compared to a chat and a crew" slide has the one-liner
+-->
+---
+
 ## Graph engineering
 
 **Your agent system is already a graph.** The only question is whether you drew it.
@@ -138,7 +172,9 @@ Cost and latency live in the **topology** - not in the model, and not in the wor
   – "synthesize" and "shapes" are both their words. The docs literally say "the prompts below show common shapes"
   – "barrier" is their term too, but it lives in the workflow tool's own contract, NOT in the public docs. Do not send anyone to the docs for it
 • The falsifiable claim: on the runs we measured, the biggest wins came from changing WHEN work happens, not from rewording a prompt
-  – the numbers for that arrive later, on the cost slide
+  – the numbers, if asked: on one measured run 37% of the wall-clock was two phase reviewers waiting on
+    each other in series, against 8% for ALL build and test work. They no longer have a slide of their
+    own; they sit in the notes of the "Reviewed by someone else" slide
 • Two reasons to widen a graph, and the second is Anthropic's and less obvious than latency:
   – latency — nothing downstream reads the output, so the wait buys nothing
   – RECOVERY — "a workflow that fans work out across many small agents preserves more progress than one long agent", because a stopped run replays from the first agent that did not finish
@@ -585,7 +621,7 @@ Sorted by weight. **B wins five, ties three, loses one** - at the joint-smallest
 
 ## What each arm cost
 
-| | **A** - Fable 5.1, `/goal` | **B** - Opus 5.5, this workflow |
+| | **A** - Fable, `/goal` | **B** - Opus, this workflow |
 |---|---|---|
 | Wall-clock | **1h 15m** | **3h 39m** |
 | Output tokens | **445k** | **780k** run · **1.60M** with planning |
@@ -723,39 +759,6 @@ Every fix a person made after a run is **an example of what the pipeline missed*
   – the question is whether that is worth 20-30 min per round, not whether the dependency exists
 • Where we stand: the board waiting for every phase is a barrier that has not earned its wait
 • We avoided the plumbing one on purpose — ordering fix waves is a few lines of JavaScript
--->
-
----
-
-## What the shape costs - and what fixing it bought
-
-We profiled our own run by reading the commit timestamps:
-
-| | share of wall-clock |
-|---|---|
-| Two reviewers waiting on each other for nothing | **37%** |
-| All the building and testing, put together | **8%** |
-
-**So we deleted that edge** - those two reviewers now run together.
-The shape cost ~4x what the compute did, and **nothing about the prompts would have found it**.
-
-**Profile your own** - the commit trailers you already write are the profiler.
-
-
-<!--
-• This is the slide the abstract promises, so land it: the expensive mistake is topological, not
-  verbal — and this is also the feedback loop working, not a to-do item
-• How it was measured, if asked: every workflow commit carries an `Implplan: P<n>/<pass>` trailer,
-  added for retrospect DISCOVERY. Their timestamps turned out to profile the run for free
-• 37% was two per-phase reviewers running in series where nothing crossed between them — a false
-  edge, exactly the first item on the previous slide. They now fan out in one `parallel()` call
-• 8% for all build and test work is the counter-intuitive half: the part everyone tries to
-  optimise was almost free next to the waiting
-• DO NOT claim we cut 37% off the run — parallelising a serial pair returns the SHORTER of the two,
-  so the ceiling is roughly half of it, and we have not re-measured a like-for-like run.
-  The measured claim is the 37% wait; the fix is that the wait is gone
-• The honest limit: n = 1, our repo, our phases. The claim is that the shape is worth MEASURING,
-  not that yours is 4x
 -->
 
 ---
