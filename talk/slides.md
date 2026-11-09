@@ -18,6 +18,20 @@ style: |
     font-size: 24px;
     opacity: 0.75;
   }
+  section.title h1 {
+    font-size: 60px;
+    line-height: 1.15;
+    margin-bottom: 56px;
+  }
+  section.title p.who {
+    font-size: 28px;
+    line-height: 1.45;
+    opacity: 1;
+    margin-bottom: 40px;
+  }
+  section.title p.who strong {
+    font-size: 34px;
+  }
   section.statement {
     justify-content: center;
     text-align: center;
@@ -59,11 +73,13 @@ style: |
   }
 ---
 
-<!-- _class: lead -->
+<!-- _class: lead title -->
 
-# Graph engineering with Claude Code dynamic workflows
+# Graph engineering<br>with Claude Code dynamic workflows
 
-## What can run in parallel, what must wait, and what it costs
+<p class="who"><strong>Augustinas Nomicas</strong><br>Software Architect, Visma Tech</p>
+
+[github.com/AugustinasNomicas/graph-engineering-claude-code](https://github.com/AugustinasNomicas/graph-engineering-claude-code)
 
 ---
 
@@ -580,7 +596,7 @@ Verdict: **merge B**, confidence high - and it merged on Aug 12.
 
 ## The scorecard
 
-| Dimension | Weight | A - Fable 5.1 | B - Opus 5.5 | |
+| Dimension | Weight | A - Fable | B - Opus | |
 |---|---|---|---|---|
 | Correctness & requirements | 30 | 3 | 4 | **B** |
 | Testing | 15 | 4 | 5 | **B** |
@@ -773,10 +789,9 @@ git clone https://github.com/AugustinasNomicas/graph-engineering-claude-code
 ```
 
 1. `repo-profile.json` - your build + test commands, **both required**: a run that cannot verify itself refuses to start
-2. `conventions.md` - your binding rules, **split by who acts on them**. This decides quality, not the prompt wording
-3. Leave the domain reviewer **empty** until a real defect escapes
+2. Leave the domain reviewer **empty** until a real defect escapes
 
-**Commit all three** - agents read them in a fresh worktree. Then dry-run with `mode: "expand"`.
+**Commit both** - agents read them in a fresh worktree. Then dry-run with `mode: "expand"`.
 
 <!--
 • The repo is PUBLIC: the workflow, 17 reviewer charters, two commands, five agents, the installer,
@@ -786,7 +801,8 @@ git clone https://github.com/AugustinasNomicas/graph-engineering-claude-code
   you exactly what you had diverged
 • Size, if asked: ~2,000 lines of JavaScript, 17 reviewer charters as markdown, two commands, five
   agents, a skill doc, and a test harness over the script's own decisions. 29 files in .claude/
-• Both files on the slide ship as TEMPLATES — repo-profile.example.json and conventions.template.md.
+• The profile ships as a TEMPLATE, repo-profile.example.json — and so does conventions.md
+  (conventions.template.md), which is off the slide for time but is still the real work.
   The installer prints the two copy commands as its next steps, so nobody has to remember them
 • The script is STACK-AGNOSTIC on purpose: nothing in it names .NET. Everything local lives in the
   two files on this slide, which is what makes it portable between repos at all
