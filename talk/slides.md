@@ -197,7 +197,7 @@ Cost and latency live in the **topology** - not in the model, and not in the wor
 • Do not oversell it. This is not a new science — it is a name for a habit good distributed-systems people already have
 • If someone says "this is just a DAG": yes, and that is the point
   – the novelty is that the nodes are whole agents, and people forget to draw it because prompting feels like the whole job
-• The next slide is the vocabulary you need to apply this. The pitfalls slide near the end is the checklist
+• The next slide is the vocabulary you need to apply this
 -->
 
 ---
@@ -750,31 +750,6 @@ Every fix a person made after a run is **an example of what the pipeline missed*
   – the clean-branch check · re-verifying criteria after fixes · the sync-first QA gate
 • This is the aggregate picture. Per-ticket evidence was the A/B earlier
   – if asked "does it actually help", point back rather than re-arguing it here
--->
-
----
-
-## Where graphs quietly break
-
-- **False edges** - chained by typing order, not because data crosses
-- **Barrier by default** - a synchronised wait nothing downstream needs
-- **Paying rent on plumbing** - an agent doing what plain code could do
-
-
-<!--
-• Slide is deliberately terse — expand each one as you go
-• False edge: "summarize this file, then check tomorrow's weather" — second half never reads the first
-• Barrier: the latency is real, measurable time. "The code is cleaner this way" does not pay for it
-• Plumbing: an agent spun up to flatten a list or dedupe an array
-  – agents are for judgement. Plain code is for wiring
-• Read these as a checklist against your own graph, not as our confession
-• Two mistakes that look alike — the second is the more interesting:
-  – a FALSE edge carries no data at all
-  – a REAL edge can carry data and still not be worth its latency
-  – reviewers in series is the second kind. The later one genuinely sees the earlier fixer's commits
-  – the question is whether that is worth 20-30 min per round, not whether the dependency exists
-• Where we stand: the board waiting for every phase is a barrier that has not earned its wait
-• We avoided the plumbing one on purpose — ordering fix waves is a few lines of JavaScript
 -->
 
 ---
